@@ -16,12 +16,34 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
     public function load(Doku_Event $event, $param)
     {
-        $event->data['script'][] = array
-        (
-            'type'    => 'text/javascript',
-            'charset' => 'utf-8',
-            'src' => DOKU_BASE."lib/plugins/mermaid/mermaid.min.js"
-		);
+        switch ($this->getConf('location')) {
+            case 'local':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'text/javascript',
+                    'charset' => 'utf-8',
+                    'src' => DOKU_BASE.'lib/plugins/mermaid/mermaid.min.js'
+                );
+                break;
+            case 'latest':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'text/javascript',
+                    'charset' => 'utf-8',
+                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'
+                );
+                break;
+
+            case 'remote93':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'text/javascript',
+                    'charset' => 'utf-8',
+                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.3/dist/mermaid.min.js'
+                );
+                break;
+            default:
+        }
 
         $event->data['link'][] = array
         (
