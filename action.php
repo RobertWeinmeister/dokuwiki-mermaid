@@ -22,6 +22,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'text/javascript',
                     'charset' => 'utf-8',
+                    // not updated
                     'src' => DOKU_BASE.'lib/plugins/mermaid/mermaid.min.js'
                 );
                 break;
@@ -30,10 +31,27 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'text/javascript',
                     'charset' => 'utf-8',
+                    // still 9.4
                     'src' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'
                 );
                 break;
-
+            case 'remote100':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'text/javascript',
+                    'charset' => 'utf-8',
+                    // not yet available
+                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@10.0/dist/mermaid.min.js'
+                );
+                break;
+            case 'remote94':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'text/javascript',
+                    'charset' => 'utf-8',
+                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.4/dist/mermaid.min.js'
+                );
+                break;
             case 'remote93':
                 $event->data['script'][] = array
                 (
