@@ -36,15 +36,15 @@ For more examples and details on the syntax, see https://mermaid.js.org/intro/.
 
 ## Configuration and Settings
 
-There is only one setting. You can chose which mermaid file and version you want to use:
+There is only one setting. You can choose which Mermaid version you want to use:
 
- - the locally hosted file using the version that came with the plugin
- - a remotely hosted file with the latest available version
- - a remotely hosted file with a specific version
+ - the locally hosted version
+ - the remotely hosted, currently available, latest version
+ - a remotely hosted specific version
 
 ## Further information
 
-Mermaid supports multiple other diagrams besides the shown flowchart:
+Mermaid supports multiple other diagrams besides the shown flowchart, for example:
  - Sequence diagrams
  - Gantt diagrams
  - Class diagrams

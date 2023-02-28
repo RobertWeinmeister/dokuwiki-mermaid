@@ -1,3 +1,3 @@
 <?php
 
-$conf['location'] = 'local';
+$conf['location'] = 'latest';
