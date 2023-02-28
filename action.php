@@ -16,32 +16,35 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
     public function load(Doku_Event $event, $param)
     {
+        // Can be changed for debugging Mermaid
+        // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
+        define("MERMAIDLOGLEVEL", "error");
+
         switch ($this->getConf('location')) {
             case 'local':
                 $event->data['script'][] = array
                 (
                     'type'    => 'text/javascript',
                     'charset' => 'utf-8',
-                    // not updated
                     'src' => DOKU_BASE.'lib/plugins/mermaid/mermaid.min.js'
                 );
                 break;
             case 'latest':
                 $event->data['script'][] = array
                 (
-                    'type'    => 'text/javascript',
+                    'type'    => 'module',
                     'charset' => 'utf-8',
-                    // still 9.4
-                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/+esm';
+                                mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
             case 'remote100':
                 $event->data['script'][] = array
                 (
-                    'type'    => 'text/javascript',
+                    'type'    => 'module',
                     'charset' => 'utf-8',
-                    // not yet available
-                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@10.0/dist/mermaid.min.js'
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0/+esm';
+                                mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
             case 'remote94':
@@ -70,13 +73,18 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             'href'    => DOKU_BASE."lib/plugins/mermaid/mermaid.css",
         );
 
-        // Can be changed for debugging
-        // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
-        $event->data['script'][] = array
-        (
-            'type'    => 'text/javascript',
-            'charset' => 'utf-8',
-            '_data'   => 'mermaid.initialize({logLevel: "error"});'
-        );
+        switch ($this->getConf('location')) {
+            case 'locally':
+            case 'remote94':
+            case 'remote93':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'text/javascript',
+                    'charset' => 'utf-8',
+                    '_data'   => "mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
+                );
+                break;
+            default:
+        }
     }
 }
