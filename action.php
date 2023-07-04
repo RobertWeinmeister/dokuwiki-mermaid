@@ -18,7 +18,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
     {
         // Can be changed for debugging Mermaid
         // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
-        define("MERMAIDLOGLEVEL", "debug");
+        define("MERMAIDLOGLEVEL", "error");
 
         switch ($this->getConf('location')) {
             case 'local':
