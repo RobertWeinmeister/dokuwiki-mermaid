@@ -18,7 +18,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
     {
         // Can be changed for debugging Mermaid
         // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
-        define("MERMAIDLOGLEVEL", "error");
+        define("MERMAIDLOGLEVEL", "debug");
 
         switch ($this->getConf('location')) {
             case 'local':
@@ -38,20 +38,30 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
+            case 'remote102':
+                $event->data['script'][] = array
+                (
+                    'type'    => 'module',
+                    'charset' => 'utf-8',
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.2.4/+esm';
+                                mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
+                );
+                break;
             case 'remote101':
                 $event->data['script'][] = array
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.1/+esm';
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.1.0/+esm';
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
+                break;
             case 'remote100':
                 $event->data['script'][] = array
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0/+esm';
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0.2/+esm';
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
@@ -60,7 +70,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'text/javascript',
                     'charset' => 'utf-8',
-                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.4/dist/mermaid.min.js'
+                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.4.3/dist/mermaid.min.js'
                 );
                 break;
             case 'remote93':
@@ -68,7 +78,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'text/javascript',
                     'charset' => 'utf-8',
-                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.3/dist/mermaid.min.js'
+                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.min.js'
                 );
                 break;
             default:
@@ -82,7 +92,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         );
 
         switch ($this->getConf('location')) {
-            case 'locally':
+            case 'local':
             case 'remote94':
             case 'remote93':
                 $event->data['script'][] = array
