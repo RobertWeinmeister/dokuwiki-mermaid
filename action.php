@@ -34,7 +34,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/+esm';
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
@@ -43,7 +43,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.2.4/+esm';
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.2.4/dist/mermaid.esm.min.mjs';
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
@@ -52,7 +52,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.1.0/+esm';
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.1.0/dist/mermaid.esm.min.mjs';
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
@@ -61,7 +61,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0.2/+esm';
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0.2/dist/mermaid.esm.min.mjs';
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
