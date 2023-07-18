@@ -41,7 +41,7 @@ class renderer_plugin_mermaid extends Doku_Renderer_xhtml
 
     function externallink($url, $name = null, $returnonly = false)
     {
-        $xhtml = parent::externallink($url, $name = null, true);
+        $xhtml = parent::externallink($url, $name, true);
 
         $xhtml = htmlentities($xhtml,ENT_NOQUOTES);
         $xhtml = str_replace(array('"'), array('\''), $xhtml);
