@@ -10,7 +10,20 @@ use dokuwiki\Parsing\Parser;
 
 class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
 {
-	/** @inheritDoc */
+    const DOKUWIKI_LINK_START_MERMAID = '<code>DOKUWIKILINKSTARTMERMAID</code>';
+    const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
+
+    function protect_brackets_from_dokuwiki($text)
+    {
+        return preg_replace('/(?<!["\[(\s])(\[\[)(.*)(\]\])/', self::DOKUWIKI_LINK_START_MERMAID . '$2' . self::DOKUWIKI_LINK_END_MERMAID, $text);
+    }
+
+    function remove_protection_of_brackets_from_dokuwiki($text)
+    {
+        return str_replace(self::DOKUWIKI_LINK_START_MERMAID, '[[', str_replace(self::DOKUWIKI_LINK_END_MERMAID, ']]', $text));
+    }
+
+   	/** @inheritDoc */
     function getType()
 	{
 		return 'container';
@@ -45,9 +58,9 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         switch ($state) {
             case DOKU_LEXER_ENTER:
                 return array($state, $match);
-            case DOKU_LEXER_UNMATCHED :
+            case DOKU_LEXER_UNMATCHED:
                 return array($state, $match);
-            case DOKU_LEXER_EXIT :
+            case DOKU_LEXER_EXIT:
                 return array($state, '');
         }
         return false;
@@ -61,19 +74,18 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         if($mode == 'xhtml'){
             list($state, $match) = $indata;
             switch ($state) {
-                case DOKU_LEXER_ENTER :
+                case DOKU_LEXER_ENTER:
                     $values = explode(" ", $match);
                     $divwidth = count($values) < 2 ? 'auto' : $values[1];
                     $divheight = count($values) < 3 ? 'auto' : substr($values[2], 0, -1);
                     $renderer->doc .= '<div class="mermaid" style="width:'.$divwidth.'; height:'.$divheight.'">';
                 break;
-                case DOKU_LEXER_UNMATCHED :
-                    $instructions = $this->p_get_instructions($match);
-                    //echo "<script>console.log('Instructions ".json_encode($instructions)."' );</script>";
-                    $xhtml = $this->p_render($instructions);
+                case DOKU_LEXER_UNMATCHED:
+                    $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
+                    $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
                     $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
                 break;
-                case DOKU_LEXER_EXIT :
+                case DOKU_LEXER_EXIT:
                     $renderer->doc .= "\r\n</div>";
                 break;
             }
@@ -98,11 +110,11 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         
         $modes = array();
 
-        // add default modes
+                // add default modes
         $std_modes = array( 'internallink', 'media', 'externallink');
 
-        foreach($std_modes as $m
-        ){
+        foreach($std_modes as $m)
+        {
             $class = 'dokuwiki\\Parsing\\ParserMode\\'.ucfirst($m);
             $obj   = new $class();
             $modes[] = array(
