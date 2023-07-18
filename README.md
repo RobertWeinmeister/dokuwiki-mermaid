@@ -8,21 +8,19 @@ Install the plugin using the [Dokuwiki Plugin Manager](https://www.dokuwiki.org/
 
 ## Usage
 
+Provide the Mermaid code enclosed by the ```<mermaid>``` tags:
+
     <mermaid>
-    graph TD;
-        A-->B;
-        A-->C;
-        B-->D;
-        C-->D;
+      graph TD
+        A(**mermaid**)-->B((__plugin__))
+        A-->C(((//for//)))
+        B-->D[["[[https://www.dokuwiki.org/dokuwiki|Dokuwiki]]"]]
+        C-->D
     </mermaid>
 
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-```
+This will be rendered by the plugin and shown as:
+
+![alt text](https://github.com/RobertWeinmeister/dokuwiki-mermaid/blob/main/example.png?raw=true)
 
 The width and height of the container of the diagram can be adjusted using
 
@@ -41,6 +39,10 @@ There is only one setting. You can choose which Mermaid version you want to use:
  - the locally hosted version
  - the remotely hosted, currently available, latest version
  - a remotely hosted specific version
+
+## Potential problems
+
+The syntax of Mermaid and DokuWiki can clash in rare cases. If, for example, you want a link within a box, make your intensions clear by using quotation marks```["[[link]]"]```. If you encounter other problems, feel free to report them and open an issue.
 
 ## Further information
 
