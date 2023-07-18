@@ -110,7 +110,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         
         $modes = array();
 
-                // add default modes
+        // add default modes
         $std_modes = array( 'internallink', 'media', 'externallink');
 
         foreach($std_modes as $m)
