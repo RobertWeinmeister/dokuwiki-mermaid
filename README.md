@@ -26,7 +26,7 @@ The width and height of the container of the diagram can be adjusted using
 
     <mermaid #width #height>
     
-where #width and #height can take any value supported by CSS:
+where #width and #height can take any value supported by CSS, for example:
 
     <mermaid 100% 1cm>
 
@@ -40,11 +40,32 @@ There is only one setting. You can choose which Mermaid version you want to use:
  - the remotely hosted, currently available, latest version
  - a remotely hosted specific version
 
-## Potential problems
+## Known Problems
 
-The syntax of Mermaid and DokuWiki can clash in rare cases. If, for example, you want a link within a box, make your intensions clear by using quotation marks```["[[link]]"]```. If you encounter other problems, feel free to report them and open an issue.
+The syntax of Mermaid and DokuWiki can clash in rare cases. If you encounter problems, feel free to report them and open an issue.
 
-## Further information
+### Usage of Brackets
+
+Mermaid and DokuWiki both use brackets. If you need to use them both at the same time, make your intensions clear by using quotation marks like ```["[[link]]"]```.
+
+### Binding Click Events 
+
+Mermaid supports the [binding of click events](https://mermaid.js.org/syntax/flowchart.html#interaction). This can and will clash with DokuWikis own handling of links. Instead of:
+
+    <mermaid>
+      flowchart TD
+        A[Link]
+        click A "https://www.github.com"
+    </mermaid>
+
+please use
+
+    <mermaid>
+      flowchart TD
+        A["[[https://www.github.com|Link]]"]
+    </mermaid>
+
+## Further Information
 
 Mermaid supports multiple other diagrams besides the shown flowchart, for example:
  - Sequence diagrams
