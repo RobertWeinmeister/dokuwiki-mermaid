@@ -12,10 +12,17 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
 {
     const DOKUWIKI_LINK_START_MERMAID = '<code>DOKUWIKILINKSTARTMERMAID</code>';
     const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
+    const DOKUWIKI_LINK_SPLITTER ='--';
 
     function protect_brackets_from_dokuwiki($text)
     {
-        return preg_replace('/(?<!["\[(\s])(\[\[)(.*)(\]\])/', self::DOKUWIKI_LINK_START_MERMAID . '$2' . self::DOKUWIKI_LINK_END_MERMAID, $text);
+        $splitText = explode(self::DOKUWIKI_LINK_SPLITTER, $text);
+        foreach ($splitText as $key => $line)
+        {
+            $splitText[$key] = preg_replace('/(?<!["\[(\s])(\[\[)(.*)(\]\])/', self::DOKUWIKI_LINK_START_MERMAID . '$2' . self::DOKUWIKI_LINK_END_MERMAID, $line);
+        }
+        $text = implode(self::DOKUWIKI_LINK_SPLITTER, $splitText);
+        return $text;
     }
 
     function remove_protection_of_brackets_from_dokuwiki($text)
