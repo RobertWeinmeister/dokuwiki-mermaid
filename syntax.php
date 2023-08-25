@@ -88,9 +88,21 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     $renderer->doc .= '<div class="mermaid" style="width:'.$divwidth.'; height:'.$divheight.'">';
                 break;
                 case DOKU_LEXER_UNMATCHED:
-                    $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
-                    $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
-                    $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
+                    $explodedMatch = explode("\n", $match);
+                    $israwmode = isset($explodedMatch[1]) && strpos($explodedMatch[1], 'raw') !== false;
+                    if($israwmode)
+                    {
+                        array_shift($explodedMatch);
+                        array_shift($explodedMatch);
+                        $actualContent = implode("\n", $explodedMatch);
+                        $renderer->doc .= $actualContent;
+                    }
+                    else
+                    {
+                        $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
+                        $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
+                        $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
+                    }
                 break;
                 case DOKU_LEXER_EXIT:
                     $renderer->doc .= "\r\n</div>";
@@ -114,7 +126,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         // https://www.dokuwiki.org/devel:parser#basic_invocation
         // Create the parser and the handler
         $Parser = new Parser(new Doku_Handler());
-        
+
         $modes = array();
 
         // add default modes
