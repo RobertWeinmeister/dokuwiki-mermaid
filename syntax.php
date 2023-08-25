@@ -58,7 +58,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     }
 
     /**
-     * Handle matches of the flowcharts syntax
+     * Handle matches of the Mermaid syntax
      */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
@@ -102,7 +102,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     }
 
     /*
-     * Get the parser instructions siutable for the mermaid
+     * Get the parser instructions suitable for the mermaid
      *
      */
     function p_get_instructions($text)
