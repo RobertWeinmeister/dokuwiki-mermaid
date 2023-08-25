@@ -30,7 +30,22 @@ where #width and #height can take any value supported by CSS, for example:
 
     <mermaid 100% 1cm>
 
-For more examples and details on the syntax, see https://mermaid.js.org/intro/.
+For more examples and details on the Mermaid syntax, see https://mermaid.js.org/intro/.
+
+### Raw mode
+
+If needed, the Mermaid code can be passed on without any processing or rendering by DokuWiki. Insert a line containing only the word raw before the Mermaid code.
+
+    <mermaid>
+      raw
+      graph TD
+        A(**mermaid**)-->B((__plugin__))
+        A-->C(((//for//)))
+        B-->D[["[[https://www.dokuwiki.org/dokuwiki|Dokuwiki]]"]]
+        C-->D
+    </mermaid>
+
+This allows to use the full feature set of Mermaid without interference from DokuWiki at the cost of not being able to use any functionality provided by DokuWiki.
 
 ## Configuration and Settings
 
@@ -43,6 +58,8 @@ There is only one setting. You can choose which Mermaid version you want to use:
 ## Known Problems
 
 The syntax of Mermaid and DokuWiki can clash in rare cases. If you encounter problems, feel free to report them and open an issue.
+
+You can sidestep these problems by using the [raw mode](#raw-mode) which disables the processing by DokuWiki, or adjust your Mermaid code as shown below.
 
 ### Usage of Brackets
 
@@ -75,3 +92,7 @@ Mermaid supports multiple other diagrams besides the shown flowchart, for exampl
  - User Journey diagrams
 
 For more information, see https://mermaid.js.org/intro/.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
