@@ -45,7 +45,7 @@ If needed, the Mermaid code can be passed on without any processing or rendering
         C-->D
     </mermaid>
 
-This allows to use the full feature set of Mermaid without interference from DokuWiki at the cost of not being able to use any functionality provided by DokuWiki.
+This allows to use the full feature set of Mermaid without interference from DokuWiki, albeit at the expanse of not being able to use any functionality provided by DokuWiki.
 
 ## Configuration and Settings
 
@@ -95,4 +95,6 @@ For more information, see https://mermaid.js.org/intro/.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v2.0. See the [LICENSE](LICENSE) file for details.
+
+Mermaid is licensed under the MIT License. See the [LICENSE Mermaid](LICENSE%20Mermaid) file for details.
