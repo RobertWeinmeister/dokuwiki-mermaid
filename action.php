@@ -38,7 +38,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                                 mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."'});"
                 );
                 break;
-                            case 'remote103':
+            case 'remote104':
                 $event->data['script'][] = array
                 (
                     'type' => 'module',
