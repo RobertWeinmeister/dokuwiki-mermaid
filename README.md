@@ -63,7 +63,7 @@ You can sidestep these problems by using the [raw mode](#raw-mode) which disable
 
 ### Usage of Brackets
 
-Mermaid and DokuWiki both use brackets. If you need to use them both at the same time, make your intensions clear by using quotation marks like ```["[[link]]"]```.
+Mermaid and DokuWiki both use brackets. If you need to use them both at the same time, make your intentions clear by using quotation marks like ```["[[link]]"]```.
 
 ### Binding Click Events 
 
