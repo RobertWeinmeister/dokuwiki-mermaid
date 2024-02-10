@@ -40,6 +40,24 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                     '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';".$init
                 );
                 break;
+            case 'remote106':
+                $event->data['script'][] = array
+                (
+                    'type' => 'module',
+                    'charset' => 'utf-8',
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.esm.min.mjs';
+                                mermaid.initialize({startOnLoad: true, logLevel: '" . MERMAIDLOGLEVEL . "'});"
+                );
+                break;
+            case 'remote104':
+                $event->data['script'][] = array
+                (
+                    'type' => 'module',
+                    'charset' => 'utf-8',
+                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.esm.min.mjs';
+                                mermaid.initialize({startOnLoad: true, logLevel: '" . MERMAIDLOGLEVEL . "'});"
+                );
+                break;
             case 'remote103':
                 $event->data['script'][] = array
                 (
