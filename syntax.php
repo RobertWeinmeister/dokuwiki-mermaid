@@ -90,6 +90,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                 case DOKU_LEXER_UNMATCHED:
                     $explodedMatch = explode("\n", $match);
                     $israwmode = isset($explodedMatch[1]) && strpos($explodedMatch[1], 'raw') !== false;
+                    echo '<pre>' , var_export($match) , '</pre>';
                     if($israwmode)
                     {
                         array_shift($explodedMatch);
