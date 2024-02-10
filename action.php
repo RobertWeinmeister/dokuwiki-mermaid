@@ -118,6 +118,20 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             'href'    => DOKU_BASE."lib/plugins/mermaid/mermaid.css",
         );
 
+        // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
+        $event->data['script'][] = array
+        (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => "window.onload = function() {
+                            var jq = jQuery.noConflict();
+                            jq('.mermaid').each(function() {
+                                var modifiedContent = jq(this).html().replace(/<span class=\"search_hit\">(.+?)<\/span>/g, '$1');
+                                jq(this).html(modifiedContent);
+                            });
+                        };"
+        );
+
         switch ($this->getConf('location')) {
             case 'local':
             case 'remote94':
