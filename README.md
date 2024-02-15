@@ -2,6 +2,13 @@
 
 This is a plugin for [Dokuwiki](https://www.dokuwiki.org/dokuwiki). It provides support for the diagramming tool [Mermaid](https://mermaid.js.org/). Mermaid is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Configuration and Settings](#configuration-and-settings)
+4. [Known Problems](#known-problems)
+5. [Further Information](#further-information)
+6. [License](#license)
+
 ## Installation
 
 Install the plugin using the [Dokuwiki Plugin Manager](https://www.dokuwiki.org/plugin:plugin). Refer to [Plugins](https://www.dokuwiki.org/plugins|Plugins) on how to install plugins manually.
@@ -49,11 +56,19 @@ This allows to use the full feature set of Mermaid without interference from Dok
 
 ## Configuration and Settings
 
-There is only one setting. You can choose which Mermaid version you want to use:
+No further configuration is required.
+
+### Version and Location
+
+You can choose which Mermaid version you want to use:
 
  - the locally hosted version
  - the remotely hosted, currently available, latest version
  - a remotely hosted specific version
+
+### Default theme
+
+You can choose which Mermaid theme should be used as a default. The available themes are the five [integrated themes of Mermaid](https://mermaid.js.org/config/theming.html#available-themes).
 
 ## Known Problems
 
@@ -81,6 +96,10 @@ please use
       flowchart TD
         A["[[https://www.github.com|Link]]"]
     </mermaid>
+
+### DokuWiki Search Highlight
+
+The search highlight of the DokuWiki search can prevent the proper parsing of the diagram, leading to an error. For that reason, it is disabled for the Mermaid diagrams. The search itself is not affected.
 
 ## Further Information
 

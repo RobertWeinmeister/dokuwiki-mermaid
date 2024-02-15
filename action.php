@@ -22,8 +22,9 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
         $theme = $this->getConf('theme');
         $init = "mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."', theme: '".$theme."'});";
+        $location = $this->getConf('location');
 
-        switch ($this->getConf('location')) {
+        switch ($location) {
             case 'local':
                 $event->data['script'][] = array
                 (
@@ -33,61 +34,29 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 );
                 break;
             case 'latest':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';".$init
-                );
-                break;
+            case 'remote108':
             case 'remote106':
-                $event->data['script'][] = array
-                (
-                    'type' => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.esm.min.mjs';
-                                mermaid.initialize({startOnLoad: true, logLevel: '" . MERMAIDLOGLEVEL . "'});"
-                );
-                break;
             case 'remote104':
-                $event->data['script'][] = array
-                (
-                    'type' => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.esm.min.mjs';
-                                mermaid.initialize({startOnLoad: true, logLevel: '" . MERMAIDLOGLEVEL . "'});"
-                );
-                break;
             case 'remote103':
-                $event->data['script'][] = array
-                (
-                    'type' => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.3.1/dist/mermaid.esm.min.mjs';".$init
-                );
-                break;
             case 'remote102':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.2.4/dist/mermaid.esm.min.mjs';".$init
-                );
-                break;
             case 'remote101':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.1.0/dist/mermaid.esm.min.mjs';".$init
-                );
-                break;
             case 'remote100':
+                $versions = array(
+                    'latest' => '',
+                    'remote108' => '@10.8.0',
+                    'remote106' => '@10.6.1',
+                    'remote104' => '@10.4.0',
+                    'remote103' => '@10.3.1',
+                    'remote102' => '@10.2.4',
+                    'remote101' => '@10.1.0',
+                    'remote100' => '@10.0.2'
+                );
+                $data = "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid".$versions[$location]."/dist/mermaid.esm.min.mjs';".$init;
                 $event->data['script'][] = array
                 (
                     'type'    => 'module',
                     'charset' => 'utf-8',
-                    '_data' => "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0.2/dist/mermaid.esm.min.mjs';".$init
+                    '_data' => $data
                 );
                 break;
             case 'remote94':
@@ -116,21 +85,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             'href'    => DOKU_BASE."lib/plugins/mermaid/mermaid.css",
         );
 
-        // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
-        $event->data['script'][] = array
-        (
-            'type'    => 'text/javascript',
-            'charset' => 'utf-8',
-            '_data' => "window.onload = function() {
-                            var jq = jQuery.noConflict();
-                            jq('.mermaid').each(function() {
-                                var modifiedContent = jq(this).html().replace(/<span class=\"search_hit\">(.+?)<\/span>/g, '$1');
-                                jq(this).html(modifiedContent);
-                            });
-                        };"
-        );
-
-        switch ($this->getConf('location')) {
+        switch ($location) {
             case 'local':
             case 'remote94':
             case 'remote93':
@@ -143,5 +98,18 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 break;
             default:
         }
+    
+        // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
+        $event->data['script'][] = array
+        (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => "document.addEventListener('DOMContentLoaded', function() { 
+                            jQuery('.mermaid').each(function() {
+                                var modifiedContent = jQuery(this).html().replace(/<span class=\"search_hit\">(.+?)<\/span>/g, '$1');
+                                jQuery(this).html(modifiedContent);
+                             })
+                        });"
+        );
     }
 }

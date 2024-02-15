@@ -1,8 +1,9 @@
 <?php
 
 $lang['location'] = 'Use locally or remotely hosted mermaid file?';
-$lang['location_o_local'] = 'locally hosted, version 10.6.1 (CJS)';
+$lang['location_o_local'] = 'locally hosted, version 10.8.0 (CJS)';
 $lang['location_o_latest'] = 'remotely hosted, latest version (ESM)';
+$lang['location_o_remote108'] = 'remotely hosted, version 10.8 (ESM)';
 $lang['location_o_remote106'] = 'remotely hosted, version 10.6 (ESM)';
 $lang['location_o_remote104'] = 'remotely hosted, version 10.4 (ESM)';
 $lang['location_o_remote103'] = 'remotely hosted, version 10.3 (ESM)';
