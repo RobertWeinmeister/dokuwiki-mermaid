@@ -105,11 +105,11 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             'type'    => 'text/javascript',
             'charset' => 'utf-8',
             '_data' => "document.addEventListener('DOMContentLoaded', function() { 
-                                        jQuery('.mermaid').each(function() {
-                                            var modifiedContent = jQuery(this).html().replace(/<span class=\"search_hit\">(.+?)<\/span>/g, '$1');
-                                            jQuery(this).html(modifiedContent);
-                                        })
-                                    });"
+                            jQuery('.mermaid').each(function() {
+                                var modifiedContent = jQuery(this).html().replace(/<span class=\"search_hit\">(.+?)<\/span>/g, '$1');
+                                jQuery(this).html(modifiedContent);
+                             })
+                        });"
         );
     }
 }
