@@ -14,6 +14,51 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
     const DOKUWIKI_LINK_SPLITTER ='--';
 
+    function enable_gantt_links($instructions)
+    {
+        $modified_instructions = $instructions;
+
+        for ($i = 0; $i < count($modified_instructions); $i++)
+        {
+            if (in_array($modified_instructions[$i][0], ["externallink", "internallink"]))
+            {
+                //$test1 = $this->p_get_instructions("[[Dokuwiki|Dokuwiki]]");
+                $test2 = $this->p_render($modified_instructions[$i]);
+                 echo '<pre>' , var_dump($modified_instructions[$i]) , '</pre>';
+                 echo '<pre>' , var_dump($test2) , '</pre>';
+            }
+
+            if (in_array($modified_instructions[$i][0], ["externallink2", "internallink2"]))
+            {
+                $link = $modified_instructions[$i][1][0];
+
+                $test1 = $this->p_get_instructions("[[Dokuwiki|Dokuwiki]]");
+                $test2 = $this->p_render($test1);
+                 echo '<pre>' , var_dump($test1) , '</pre>';
+                 echo '<pre>' , var_dump($test2) , '</pre>';
+
+                // insert the click event
+                if (preg_match('/(?<=:\s)\S+(?=,)/', $modified_instructions[$i+1][1][0], $output_array))
+                {
+                     $click_reference = $output_array[0];
+                }
+                array_splice($modified_instructions, $i + 2, 0, [["cdata", ["\nclick ".$click_reference." href \"".$link."\"\n"]]]);
+                
+                // change externallink to just the name of the link
+                $modified_instructions[$i][0]= "cdata";
+                if(!is_null($modified_instructions[$i][1][1]))
+                {
+                    unset($modified_instructions[$i][1][0]);
+                }
+
+                // encode colon
+                $modified_instructions[$i][1][0] = str_replace(":", "#colon;", $modified_instructions[$i][1][0]);
+            }
+        }
+                
+        return $modified_instructions;
+    }
+
     function protect_brackets_from_dokuwiki($text)
     {
         $splitText = explode(self::DOKUWIKI_LINK_SPLITTER, $text);
@@ -100,7 +145,15 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     else
                     {
                         $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
+
+                        if (strpos($instructions[2][1][0], "gantt"))
+                        {
+                            $instructions = $this->enable_gantt_links($instructions);
+                        }
+
+                        echo '<pre>' , var_dump($instructions) , '</pre>';
                         $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
+                        echo '<pre>' , var_dump($xhtml) , '</pre>';
                         $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
                     }
                 break;
