@@ -85,7 +85,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     $values = explode(" ", $match);
                     $divwidth = count($values) < 2 ? 'auto' : $values[1];
                     $divheight = count($values) < 3 ? 'auto' : substr($values[2], 0, -1);
-                    $renderer->doc .= '<div class="mermaid" style="width:'.$divwidth.'; height:'.$divheight.'">';
+                    $renderer->doc .= '<span class="mermaidContainer style="position: relative;"><span class="mermaid" style="width:'.$divwidth.'; height:'.$divheight.'">';
                 break;
                 case DOKU_LEXER_UNMATCHED:
                     $explodedMatch = explode("\n", $match);
@@ -105,7 +105,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     }
                 break;
                 case DOKU_LEXER_EXIT:
-                    $renderer->doc .= "\r\n</div>";
+                    $renderer->doc .= "\r\n</span><button id='mermaidButton' style='position: relative; top: 0; left: 0;'>Save Image</button></span>";
                 break;
             }
             return true;
