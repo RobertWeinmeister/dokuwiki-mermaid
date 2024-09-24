@@ -119,5 +119,34 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                              })
                         });"
         );
+
+        // testing
+        $event->data['script'][] = array
+        (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => "document.addEventListener('DOMContentLoaded', function() {
+    var target =  jQuery('.mermaid')[0];
+
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && target.innerHTML.startsWith('<svg')) {
+                console.log('Content has changed!');
+                console.log(target.innerHTML)
+            }
+        });
+    });
+
+    var config = { 
+        childList: true, 
+        subtree: true,
+        characterData: true 
+    };
+
+    observer.observe(target, config);
+})"
+
+        );
     }
 }
+
