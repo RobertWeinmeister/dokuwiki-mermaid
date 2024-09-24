@@ -34,6 +34,8 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 );
                 break;
             case 'latest':
+            case 'remote1091':
+            // options remote108, remote106, remote104, remote103, remote102, remote101, remote100 are depreciated and only included for backward compatibility
             case 'remote108':
             case 'remote106':
             case 'remote104':
@@ -43,6 +45,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             case 'remote100':
                 $versions = array(
                     'latest' => '',
+                    'remote1091' => '@10.9.1',
                     'remote108' => '@10.8.0',
                     'remote106' => '@10.6.1',
                     'remote104' => '@10.4.0',
@@ -59,7 +62,9 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                     '_data' => $data
                 );
                 break;
+            // option remote94 is depreciated and only included for backward compatibility
             case 'remote94':
+            case 'remote943':
                 $event->data['script'][] = array
                 (
                     'type'    => 'text/javascript',
@@ -67,6 +72,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                     'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.4.3/dist/mermaid.min.js'
                 );
                 break;
+            // option remote93 is depreciated and only included for backward compatibility
             case 'remote93':
                 $event->data['script'][] = array
                 (
@@ -87,6 +93,8 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
         switch ($location) {
             case 'local':
+            case 'remote943':
+            // options remote94 and remote93 are depreciated and only included for backward compatibility
             case 'remote94':
             case 'remote93':
                 $event->data['script'][] = array
