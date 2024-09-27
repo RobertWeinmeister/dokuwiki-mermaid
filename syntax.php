@@ -16,6 +16,39 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
 
     private $mermaidCounter = -1;
 
+    function enable_gantt_links($instructions)
+    {
+    $modified_instructions = $instructions;
+
+    for ($i = 0; $i < count($modified_instructions); $i++)
+    {
+        if (in_array($modified_instructions[$i][0], ["externallink", "internallink"]))
+        {
+            // use the appropriate link
+            $link = $modified_instructions[$i][0] == "externallink" ? $modified_instructions[$i][1][0] : wl($modified_instructions[$i][1][0], '', true);
+        
+            // change link here to just the name of the link
+            $modified_instructions[$i][0]= "cdata";
+            if(!is_null($modified_instructions[$i][1][1]))
+            {
+                unset($modified_instructions[$i][1][0]);
+            }
+        
+            // insert the click event
+            if (preg_match('/(?<=:\s)\S+(?=,)/', $modified_instructions[$i+1][1][0], $output_array))
+            {
+                $click_reference = $output_array[0];
+            }
+            array_splice($modified_instructions, $i + 2, 0, [["cdata", ["\nclick ".$click_reference." href \"".$link."\"\n"]]]);
+            
+            // encode colons
+            $modified_instructions[$i][1][0] = str_replace(":", "#colon;", $modified_instructions[$i][1][0]); 
+            }
+        }
+    
+        return $modified_instructions;
+    }
+
     function protect_brackets_from_dokuwiki($text)
     {
         $splitText = explode(self::DOKUWIKI_LINK_SPLITTER, $text);
@@ -32,17 +65,17 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         return str_replace(self::DOKUWIKI_LINK_START_MERMAID, '[[', str_replace(self::DOKUWIKI_LINK_END_MERMAID, ']]', $text));
     }
 
-   	/** @inheritDoc */
+    /** @inheritDoc */
     function getType()
-	{
-		return 'container';
-	}
+    {
+        return 'container';
+    }
 
     /** @inheritDoc */
     function getSort()
-	{
-		return 150;
-	}
+    {
+        return 150;
+    }
 
     /**
     * Connect lookup pattern to lexer.
@@ -60,24 +93,25 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     }
 
     /**
-     * Handle matches of the Mermaid syntax
-     */
+    * Handle matches of the Mermaid syntax
+    */
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
-        switch ($state) {
+        switch ($state)
+        {
             case DOKU_LEXER_ENTER:
-                return array($state, $match);
+            return array($state, $match);
             case DOKU_LEXER_UNMATCHED:
-                return array($state, $match);
+            return array($state, $match);
             case DOKU_LEXER_EXIT:
-                return array($state, '');
+            return array($state, '');
         }
         return false;
     }
 
     /**
-     * Render xhtml output or metadata
-     */
+    * Render xhtml output or metadata
+    */
     function render($mode, Doku_Renderer $renderer, $indata)
     {
         if($mode == 'xhtml'){
@@ -103,6 +137,10 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     else
                     {
                         $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
+                        if (strpos($instructions[2][1][0], "gantt"))
+                        {
+                            $instructions = $this->enable_gantt_links($instructions);
+                        }
                         $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
                         $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
                     }
@@ -118,9 +156,9 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     }
 
     /*
-     * Get the parser instructions suitable for the mermaid
-     *
-     */
+    * Get the parser instructions suitable for the mermaid
+    *
+    */
     function p_get_instructions($text)
     {
         //import parser classes and mode definitions
@@ -141,9 +179,9 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
             $class = 'dokuwiki\\Parsing\\ParserMode\\'.ucfirst($m);
             $obj   = new $class();
             $modes[] = array(
-                'sort' => $obj->getSort(),
-                'mode' => $m,
-                'obj'  => $obj
+            'sort' => $obj->getSort(),
+            'mode' => $m,
+            'obj'  => $obj
             );
         }
 
@@ -151,12 +189,12 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         $fmt_modes = array( 'strong', 'emphasis', 'underline', 'monospace', 'subscript', 'superscript', 'deleted');
         foreach($fmt_modes as $m)
         {
-            $obj   = new \dokuwiki\Parsing\ParserMode\Formatting($m);
-            $modes[] = array(
-                'sort' => $obj->getSort(),
-                'mode' => $m,
-                'obj'  => $obj
-            );
+          $obj   = new \dokuwiki\Parsing\ParserMode\Formatting($m);
+          $modes[] = array(
+            'sort' => $obj->getSort(),
+            'mode' => $m,
+            'obj'  => $obj
+          );
         }
 
         //add modes to parser
@@ -178,7 +216,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         // Loop through the instructions
         foreach ($instructions as $instruction) {
             if(method_exists($Renderer, $instruction[0])){
-                call_user_func_array(array(&$Renderer, $instruction[0]), $instruction[1] ? $instruction[1] : array());
+            call_user_func_array(array(&$Renderer, $instruction[0]), $instruction[1] ? $instruction[1] : array());
             }
         }
 
