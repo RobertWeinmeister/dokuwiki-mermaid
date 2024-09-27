@@ -119,5 +119,50 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                              })
                         });"
         );
+
+        // adds image-save capability
+        // First: Wait until the DOM content is fully loaded
+        // Second: Wait until Mermaid has changed the dokuwiki content to an svg
+        $event->data['script'][] = array
+        (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => "
+document.addEventListener('DOMContentLoaded', function() {
+     var config = {
+        childList: true,
+        subtree: true,
+        characterData: true
+    };
+
+    jQuery('.mermaid').each(function(index, element) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
+                    document.getElementById('mermaidContainer' + index).addEventListener('mouseenter', function() {
+                        document.getElementById('mermaidButton' + index).style.display = 'block';
+                    });
+                    document.getElementById('mermaidContainer' + index).addEventListener('mouseleave', function() {
+                        document.getElementById('mermaidButton' + index).style.display = 'none';
+                    });
+
+                    document.getElementById('mermaidButton' + index).addEventListener('click', () => {
+                        var svgContent = element.innerHTML.trim();
+                        var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                        var link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'mermaid' + index + '.svg';
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                    });
+                }
+            });
+        });
+
+        observer.observe(element, config);
+    });
+});"
+        );
     }
 }
+
