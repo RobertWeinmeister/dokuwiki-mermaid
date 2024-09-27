@@ -10,107 +10,108 @@ use dokuwiki\Parsing\Parser;
 
 class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
 {
-  const DOKUWIKI_LINK_START_MERMAID = '<code>DOKUWIKILINKSTARTMERMAID</code>';
-  const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
-  const DOKUWIKI_LINK_SPLITTER ='--';
+    const DOKUWIKI_LINK_START_MERMAID = '<code>DOKUWIKILINKSTARTMERMAID</code>';
+    const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
+    const DOKUWIKI_LINK_SPLITTER ='--';
 
-  private $mermaidCounter = -1;
+    private $mermaidCounter = -1;
 
-  function enable_gantt_links($instructions)
-  {
+    function enable_gantt_links($instructions)
+    {
     $modified_instructions = $instructions;
 
     for ($i = 0; $i < count($modified_instructions); $i++)
     {
-      if (in_array($modified_instructions[$i][0], ["externallink", "internallink"]))
-      {
-        // use the appropriate link
-        $link = $modified_instructions[$i][0] == "externallink" ? $modified_instructions[$i][1][0] : wl($modified_instructions[$i][1][0], '', true);
-        
-        // change link here to just the name of the link
-        $modified_instructions[$i][0]= "cdata";
-        if(!is_null($modified_instructions[$i][1][1]))
+        if (in_array($modified_instructions[$i][0], ["externallink", "internallink"]))
         {
-            unset($modified_instructions[$i][1][0]);
-        }
+            // use the appropriate link
+            $link = $modified_instructions[$i][0] == "externallink" ? $modified_instructions[$i][1][0] : wl($modified_instructions[$i][1][0], '', true);
         
-        // insert the click event
-        if (preg_match('/(?<=:\s)\S+(?=,)/', $modified_instructions[$i+1][1][0], $output_array))
-        {
-          $click_reference = $output_array[0];
-        }
-        array_splice($modified_instructions, $i + 2, 0, [["cdata", ["\nclick ".$click_reference." href \"".$link."\"\n"]]]);
+            // change link here to just the name of the link
+            $modified_instructions[$i][0]= "cdata";
+            if(!is_null($modified_instructions[$i][1][1]))
+            {
+                unset($modified_instructions[$i][1][0]);
+            }
+        
+            // insert the click event
+            if (preg_match('/(?<=:\s)\S+(?=,)/', $modified_instructions[$i+1][1][0], $output_array))
+            {
+                $click_reference = $output_array[0];
+            }
+            array_splice($modified_instructions, $i + 2, 0, [["cdata", ["\nclick ".$click_reference." href \"".$link."\"\n"]]]);
             
-        // encode colons
-        $modified_instructions[$i][1][0] = str_replace(":", "#colon;", $modified_instructions[$i][1][0]); 
-      }
-    }
+            // encode colons
+            $modified_instructions[$i][1][0] = str_replace(":", "#colon;", $modified_instructions[$i][1][0]); 
+            }
+        }
     
-    return $modified_instructions;
-  }
+        return $modified_instructions;
+    }
 
-  function protect_brackets_from_dokuwiki($text)
-  {
-    $splitText = explode(self::DOKUWIKI_LINK_SPLITTER, $text);
-    foreach ($splitText as $key => $line)
+    function protect_brackets_from_dokuwiki($text)
     {
-      $splitText[$key] = preg_replace('/(?<!["\[(\s])(\[\[)(.*)(\]\])/', self::DOKUWIKI_LINK_START_MERMAID . '$2' . self::DOKUWIKI_LINK_END_MERMAID, $line);
+        $splitText = explode(self::DOKUWIKI_LINK_SPLITTER, $text);
+        foreach ($splitText as $key => $line)
+        {
+            $splitText[$key] = preg_replace('/(?<!["\[(\s])(\[\[)(.*)(\]\])/', self::DOKUWIKI_LINK_START_MERMAID . '$2' . self::DOKUWIKI_LINK_END_MERMAID, $line);
+        }
+        $text = implode(self::DOKUWIKI_LINK_SPLITTER, $splitText);
+        return $text;
     }
-    $text = implode(self::DOKUWIKI_LINK_SPLITTER, $splitText);
-    return $text;
-  }
 
-  function remove_protection_of_brackets_from_dokuwiki($text)
-  {
-    return str_replace(self::DOKUWIKI_LINK_START_MERMAID, '[[', str_replace(self::DOKUWIKI_LINK_END_MERMAID, ']]', $text));
-  }
-
-  /** @inheritDoc */
-  function getType()
-  {
-    return 'container';
-  }
-
-  /** @inheritDoc */
-  function getSort()
-  {
-    return 150;
-  }
-
-  /**
-  * Connect lookup pattern to lexer.
-  *
-  * @param string $mode Parser mode
-  */
-  function connectTo($mode)
-  {
-    $this->Lexer->addEntryPattern('<mermaid.*?>(?=.*?</mermaid>)',$mode,'plugin_mermaid');
-  }
-
-  function postConnect()
-  {
-    $this->Lexer->addExitPattern('</mermaid>','plugin_mermaid');
-  }
-
-  /**
-   * Handle matches of the Mermaid syntax
-   */
-  function handle($match, $state, $pos, Doku_Handler $handler)
-  {
-    switch ($state) {
-      case DOKU_LEXER_ENTER:
-        return array($state, $match);
-      case DOKU_LEXER_UNMATCHED:
-      return array($state, $match);
-        case DOKU_LEXER_EXIT:
-        return array($state, '');
+    function remove_protection_of_brackets_from_dokuwiki($text)
+    {
+        return str_replace(self::DOKUWIKI_LINK_START_MERMAID, '[[', str_replace(self::DOKUWIKI_LINK_END_MERMAID, ']]', $text));
     }
-    return false;
-  }
+
+    /** @inheritDoc */
+    function getType()
+    {
+        return 'container';
+    }
+
+    /** @inheritDoc */
+    function getSort()
+    {
+        return 150;
+    }
 
     /**
-     * Render xhtml output or metadata
-     */
+    * Connect lookup pattern to lexer.
+    *
+    * @param string $mode Parser mode
+    */
+    function connectTo($mode)
+    {
+        $this->Lexer->addEntryPattern('<mermaid.*?>(?=.*?</mermaid>)',$mode,'plugin_mermaid');
+    }
+
+    function postConnect()
+    {
+        $this->Lexer->addExitPattern('</mermaid>','plugin_mermaid');
+    }
+
+    /**
+    * Handle matches of the Mermaid syntax
+    */
+    function handle($match, $state, $pos, Doku_Handler $handler)
+    {
+        switch ($state)
+        {
+            case DOKU_LEXER_ENTER:
+            return array($state, $match);
+            case DOKU_LEXER_UNMATCHED:
+            return array($state, $match);
+            case DOKU_LEXER_EXIT:
+            return array($state, '');
+        }
+        return false;
+    }
+
+    /**
+    * Render xhtml output or metadata
+    */
     function render($mode, Doku_Renderer $renderer, $indata)
     {
         if($mode == 'xhtml'){
@@ -138,7 +139,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                         $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
                         if (strpos($instructions[2][1][0], "gantt"))
                         {
-                          $instructions = $this->enable_gantt_links($instructions);
+                            $instructions = $this->enable_gantt_links($instructions);
                         }
                         $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
                         $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
@@ -154,71 +155,71 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         return false;
     }
 
-  /*
-   * Get the parser instructions suitable for the mermaid
-   *
-   */
-  function p_get_instructions($text)
-  {
-    //import parser classes and mode definitions
-    require_once DOKU_INC . 'inc/parser/parser.php';
-
-    // https://www.dokuwiki.org/devel:parser
-    // https://www.dokuwiki.org/devel:parser#basic_invocation
-    // Create the parser and the handler
-    $Parser = new Parser(new Doku_Handler());
-
-    $modes = array();
-
-    // add default modes
-    $std_modes = array( 'internallink', 'media', 'externallink');
-
-    foreach($std_modes as $m)
+    /*
+    * Get the parser instructions suitable for the mermaid
+    *
+    */
+    function p_get_instructions($text)
     {
-      $class = 'dokuwiki\\Parsing\\ParserMode\\'.ucfirst($m);
-      $obj   = new $class();
-      $modes[] = array(
-        'sort' => $obj->getSort(),
-        'mode' => $m,
-        'obj'  => $obj
-      );
+        //import parser classes and mode definitions
+        require_once DOKU_INC . 'inc/parser/parser.php';
+
+        // https://www.dokuwiki.org/devel:parser
+        // https://www.dokuwiki.org/devel:parser#basic_invocation
+        // Create the parser and the handler
+        $Parser = new Parser(new Doku_Handler());
+
+        $modes = array();
+
+        // add default modes
+        $std_modes = array( 'internallink', 'media', 'externallink');
+
+        foreach($std_modes as $m)
+        {
+            $class = 'dokuwiki\\Parsing\\ParserMode\\'.ucfirst($m);
+            $obj   = new $class();
+            $modes[] = array(
+            'sort' => $obj->getSort(),
+            'mode' => $m,
+            'obj'  => $obj
+            );
+        }
+
+        // add formatting modes
+        $fmt_modes = array( 'strong', 'emphasis', 'underline', 'monospace', 'subscript', 'superscript', 'deleted');
+        foreach($fmt_modes as $m)
+        {
+          $obj   = new \dokuwiki\Parsing\ParserMode\Formatting($m);
+          $modes[] = array(
+            'sort' => $obj->getSort(),
+            'mode' => $m,
+            'obj'  => $obj
+          );
+        }
+
+        //add modes to parser
+        foreach($modes as $mode)
+        {
+            $Parser->addMode($mode['mode'],$mode['obj']);
+        }
+
+        // Do the parsing
+        $p = $Parser->parse($text);
+
+        return $p;
     }
 
-    // add formatting modes
-    $fmt_modes = array( 'strong', 'emphasis', 'underline', 'monospace', 'subscript', 'superscript', 'deleted');
-    foreach($fmt_modes as $m)
+    public function p_render($instructions)
     {
-      $obj   = new \dokuwiki\Parsing\ParserMode\Formatting($m);
-      $modes[] = array(
-        'sort' => $obj->getSort(),
-        'mode' => $m,
-        'obj'  => $obj
-      );
+        $Renderer = p_get_renderer('mermaid');
+
+        // Loop through the instructions
+        foreach ($instructions as $instruction) {
+            if(method_exists($Renderer, $instruction[0])){
+            call_user_func_array(array(&$Renderer, $instruction[0]), $instruction[1] ? $instruction[1] : array());
+            }
+        }
+
+        return $Renderer->doc;
     }
-
-    //add modes to parser
-    foreach($modes as $mode)
-    {
-      $Parser->addMode($mode['mode'],$mode['obj']);
-    }
-
-    // Do the parsing
-    $p = $Parser->parse($text);
-
-    return $p;
-  }
-
-  public function p_render($instructions)
-  {
-    $Renderer = p_get_renderer('mermaid');
-
-    // Loop through the instructions
-    foreach ($instructions as $instruction) {
-      if(method_exists($Renderer, $instruction[0])){
-        call_user_func_array(array(&$Renderer, $instruction[0]), $instruction[1] ? $instruction[1] : array());
-      }
-    }
-
-    return $Renderer->doc;
-  }
 }
