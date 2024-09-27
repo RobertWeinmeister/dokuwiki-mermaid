@@ -14,6 +14,8 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
   const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
   const DOKUWIKI_LINK_SPLITTER ='--';
 
+  private $mermaidCounter = -1;
+
   function enable_gantt_links($instructions)
   {
     $modified_instructions = $instructions;
@@ -106,51 +108,51 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     return false;
   }
 
-  /**
-   * Render xhtml output or metadata
-   */
-  function render($mode, Doku_Renderer $renderer, $indata)
-  {
-    if($mode == 'xhtml'){
-      list($state, $match) = $indata;
-      switch ($state) {
-        case DOKU_LEXER_ENTER:
-          $values = explode(" ", $match);
-          $divwidth = count($values) < 2 ? 'auto' : $values[1];
-          $divheight = count($values) < 3 ? 'auto' : substr($values[2], 0, -1);
-          $renderer->doc .= '<div class="mermaid" style="width:'.$divwidth.'; height:'.$divheight.'">';
-        break;
-        case DOKU_LEXER_UNMATCHED:
-          $explodedMatch = explode("\n", $match);
-          $israwmode = isset($explodedMatch[1]) && strpos($explodedMatch[1], 'raw') !== false;
-          if($israwmode)
-          {
-            array_shift($explodedMatch);
-            array_shift($explodedMatch);
-            $actualContent = implode("\n", $explodedMatch);
-            $renderer->doc .= $actualContent;
-          }
-          else
-          {
-            $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
-
-            if (strpos($instructions[2][1][0], "gantt"))
-            {
-              $instructions = $this->enable_gantt_links($instructions);
+    /**
+     * Render xhtml output or metadata
+     */
+    function render($mode, Doku_Renderer $renderer, $indata)
+    {
+        if($mode == 'xhtml'){
+            list($state, $match) = $indata;
+            switch ($state) {
+                case DOKU_LEXER_ENTER:
+                    $this->mermaidCounter++;
+                    $values = explode(" ", $match);
+                    $divwidth = count($values) < 2 ? 'auto' : $values[1];
+                    $divheight = count($values) < 3 ? 'auto' : substr($values[2], 0, -1);
+                    $renderer->doc .= '<div id="mermaidContainer'.$this->mermaidCounter.'" style="position: relative;"><span class="mermaid" id=mermaidContent'.$this->mermaidCounter.' style="width:'.$divwidth.'; height:'.$divheight.'">';
+                break;
+                case DOKU_LEXER_UNMATCHED:
+                    $explodedMatch = explode("\n", $match);
+                    $israwmode = isset($explodedMatch[1]) && strpos($explodedMatch[1], 'raw') !== false;
+                    if($israwmode)
+                    {
+                        array_shift($explodedMatch);
+                        array_shift($explodedMatch);
+                        $actualContent = implode("\n", $explodedMatch);
+                        $renderer->doc .= $actualContent;
+                    }
+                    else
+                    {
+                        $instructions = $this->p_get_instructions($this->protect_brackets_from_dokuwiki($match));
+                        if (strpos($instructions[2][1][0], "gantt"))
+                        {
+                          $instructions = $this->enable_gantt_links($instructions);
+                        }
+                        $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
+                        $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
+                    }
+                break;
+                case DOKU_LEXER_EXIT:
+                    $renderer->doc .= "\r\n";
+                    $renderer->doc .= '</span><button id="mermaidButton'.$this->mermaidCounter.'" style="position: absolute; top: 0; left: 0; z-index: 10; display: none; padding: 0; margin: 0; border: none; background: none; width: 24px; height: 24px;"><svg fill="#000000" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve" style="width: 24px; height: 24px;"><path d="M37.1,4v13.6c0,1-0.8,1.9-1.9,1.9H13.9c-1,0-1.9-0.8-1.9-1.9V4H8C5.8,4,4,5.8,4,8v36c0,2.2,1.8,4,4,4h36  c2.2,0,4-1.8,4-4V11.2L40.8,4H37.1z M44.1,42.1c0,1-0.8,1.9-1.9,1.9H9.9c-1,0-1.9-0.8-1.9-1.9V25.4c0-1,0.8-1.9,1.9-1.9h32.3  c1,0,1.9,0.8,1.9,1.9V42.1z"/><path d="M24.8,13.6c0,1,0.8,1.9,1.9,1.9h4.6c1,0,1.9-0.8,1.9-1.9V4h-8.3L24.8,13.6L24.8,13.6z"/></svg></button></div>';
+                break;
             }
-
-            $xhtml = $this->remove_protection_of_brackets_from_dokuwiki($this->p_render($instructions));
-            $renderer->doc .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
-          }
-        break;
-        case DOKU_LEXER_EXIT:
-          $renderer->doc .= "\r\n</div>";
-        break;
-      }
-      return true;
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
 
   /*
    * Get the parser instructions suitable for the mermaid

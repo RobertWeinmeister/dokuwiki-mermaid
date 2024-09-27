@@ -34,6 +34,8 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 );
                 break;
             case 'latest':
+            case 'remote1091':
+            // options remote108, remote106, remote104, remote103, remote102, remote101, remote100 are depreciated and only included for backward compatibility
             case 'remote108':
             case 'remote106':
             case 'remote104':
@@ -43,6 +45,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             case 'remote100':
                 $versions = array(
                     'latest' => '',
+                    'remote1091' => '@10.9.1',
                     'remote108' => '@10.8.0',
                     'remote106' => '@10.6.1',
                     'remote104' => '@10.4.0',
@@ -59,7 +62,9 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                     '_data' => $data
                 );
                 break;
+            // option remote94 is depreciated and only included for backward compatibility
             case 'remote94':
+            case 'remote943':
                 $event->data['script'][] = array
                 (
                     'type'    => 'text/javascript',
@@ -67,6 +72,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                     'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.4.3/dist/mermaid.min.js'
                 );
                 break;
+            // option remote93 is depreciated and only included for backward compatibility
             case 'remote93':
                 $event->data['script'][] = array
                 (
@@ -87,6 +93,8 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
         switch ($location) {
             case 'local':
+            case 'remote943':
+            // options remote94 and remote93 are depreciated and only included for backward compatibility
             case 'remote94':
             case 'remote93':
                 $event->data['script'][] = array
@@ -111,5 +119,50 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                              })
                         });"
         );
+
+        // adds image-save capability
+        // First: Wait until the DOM content is fully loaded
+        // Second: Wait until Mermaid has changed the dokuwiki content to an svg
+        $event->data['script'][] = array
+        (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => "
+document.addEventListener('DOMContentLoaded', function() {
+     var config = {
+        childList: true,
+        subtree: true,
+        characterData: true
+    };
+
+    jQuery('.mermaid').each(function(index, element) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
+                    document.getElementById('mermaidContainer' + index).addEventListener('mouseenter', function() {
+                        document.getElementById('mermaidButton' + index).style.display = 'block';
+                    });
+                    document.getElementById('mermaidContainer' + index).addEventListener('mouseleave', function() {
+                        document.getElementById('mermaidButton' + index).style.display = 'none';
+                    });
+
+                    document.getElementById('mermaidButton' + index).addEventListener('click', () => {
+                        var svgContent = element.innerHTML.trim();
+                        var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                        var link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'mermaid' + index + '.svg';
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                    });
+                }
+            });
+        });
+
+        observer.observe(element, config);
+    });
+});"
+        );
     }
 }
+
