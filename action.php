@@ -107,6 +107,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             default:
         }
     
+        /*
         // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
         $event->data['script'][] = array
         (
@@ -119,6 +120,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                              })
                         });"
         );
+        */
 
         // adds image-save capability
         // First: Wait until the DOM content is fully loaded
@@ -136,15 +138,13 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     jQuery('.mermaid').each(function(index, element) {
-        
-
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
-                    element.addEventListener('mouseenter', function() {
+                    document.getElementById('mermaidContainer' + (index+1)).addEventListener('mouseenter', function() {
                         document.getElementById('mermaidButton' + (index+1)).style.display = 'block';
                     });
-                    element.addEventListener('mouseleave', function() {
+                    document.getElementById('mermaidContainer' + (index+1)).addEventListener('mouseleave', function() {
                         document.getElementById('mermaidButton' + (index+1)).style.display = 'none';
                     });
 
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         var blob = new Blob([svgContent], { type: 'image/svg+xml' });
                         var link = document.createElement('a');
                         link.href = URL.createObjectURL(blob);
-                        link.download = 'mermaid' + (index+1) + '.svg'; // Set the file name
+                        link.download = 'mermaid' + (index+1) + '.svg';
                         link.click();
                         URL.revokeObjectURL(link.href);
                     });

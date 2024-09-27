@@ -88,7 +88,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     $values = explode(" ", $match);
                     $divwidth = count($values) < 2 ? 'auto' : $values[1];
                     $divheight = count($values) < 3 ? 'auto' : substr($values[2], 0, -1);
-                    $renderer->doc .= '<div class="mermaidContainer'.$this->$mermaidCounter.'" style="position: relative;"><span class="mermaid" id=mermaidContent'.$this->$mermaidCounter.' style="width:'.$divwidth.'; height:'.$divheight.'">';
+                    $renderer->doc .= '<div id="mermaidContainer'.$this->$mermaidCounter.'" style="position: relative;"><span class="mermaid" id=mermaidContent'.$this->$mermaidCounter.' style="width:'.$divwidth.'; height:'.$divheight.'">';
                 break;
                 case DOKU_LEXER_UNMATCHED:
                     $explodedMatch = explode("\n", $match);
@@ -109,7 +109,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                 break;
                 case DOKU_LEXER_EXIT:
                     $renderer->doc .= "\r\n";
-                    $renderer->doc .= '</span><button id="mermaidButton'.$this->$mermaidCounter.'" style="position: absolute; top: 0; left: 0; z-index: 10; display: none;">Save Image</button></div>';
+                    $renderer->doc .= '</span><button id="mermaidButton'.$this->$mermaidCounter.'" style="position: absolute; top: 0; left: 0; z-index: 10; display: none; padding: 0; margin: 0; border: none; background: none; width: 24px; height: 24px;"><svg fill="#000000" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve" style="width: 24px; height: 24px;"><path d="M37.1,4v13.6c0,1-0.8,1.9-1.9,1.9H13.9c-1,0-1.9-0.8-1.9-1.9V4H8C5.8,4,4,5.8,4,8v36c0,2.2,1.8,4,4,4h36  c2.2,0,4-1.8,4-4V11.2L40.8,4H37.1z M44.1,42.1c0,1-0.8,1.9-1.9,1.9H9.9c-1,0-1.9-0.8-1.9-1.9V25.4c0-1,0.8-1.9,1.9-1.9h32.3  c1,0,1.9,0.8,1.9,1.9V42.1z"/><path d="M24.8,13.6c0,1,0.8,1.9,1.9,1.9h4.6c1,0,1.9-0.8,1.9-1.9V4h-8.3L24.8,13.6L24.8,13.6z"/></svg></button></div>';
                 break;
             }
             return true;
