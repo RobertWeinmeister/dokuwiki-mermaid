@@ -14,6 +14,8 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     const DOKUWIKI_LINK_END_MERMAID = '<code>DOKUWIKILINKENDMERMAID</code>';
     const DOKUWIKI_LINK_SPLITTER ='--';
 
+    private $mermaidCounter = 0;
+
     function protect_brackets_from_dokuwiki($text)
     {
         $splitText = explode(self::DOKUWIKI_LINK_SPLITTER, $text);
@@ -82,10 +84,11 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
             list($state, $match) = $indata;
             switch ($state) {
                 case DOKU_LEXER_ENTER:
+                    $this->$mermaidCounter++;
                     $values = explode(" ", $match);
                     $divwidth = count($values) < 2 ? 'auto' : $values[1];
                     $divheight = count($values) < 3 ? 'auto' : substr($values[2], 0, -1);
-                    $renderer->doc .= '<span class="mermaidContainer style="position: relative;"><span class="mermaid" style="width:'.$divwidth.'; height:'.$divheight.'">';
+                    $renderer->doc .= '<span class="mermaidContainer" style="position: relative;"><span class="mermaid" id=mermaidContent'.$this->$mermaidCounter.' style="width:'.$divwidth.'; height:'.$divheight.'">';
                 break;
                 case DOKU_LEXER_UNMATCHED:
                     $explodedMatch = explode("\n", $match);
@@ -105,7 +108,8 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     }
                 break;
                 case DOKU_LEXER_EXIT:
-                    $renderer->doc .= "\r\n</span><button id='mermaidButton' style='position: relative; top: 0; left: 0;'>Save Image</button></span>";
+                    $renderer->doc .= "\r\n";
+                    $renderer->doc .= '</span><button id="mermaidButton'.$this->$mermaidCounter.'" style="position: relative; top: 0; left: 0;">Save Image</button></span>';
                 break;
             }
             return true;

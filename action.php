@@ -125,27 +125,35 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         (
             'type'    => 'text/javascript',
             'charset' => 'utf-8',
-            '_data' => "document.addEventListener('DOMContentLoaded', function() {
-    var target =  jQuery('.mermaid')[0];
-
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList' && target.innerHTML.startsWith('<svg')) {
-                console.log('Content has changed!');
-                console.log(target.innerHTML)
-            }
-        });
-    });
-
-    var config = { 
-        childList: true, 
+            '_data' => "
+document.addEventListener('DOMContentLoaded', function() {
+     var config = {
+        childList: true,
         subtree: true,
-        characterData: true 
+        characterData: true
     };
 
-    observer.observe(target, config);
-})"
+    var target =  jQuery('.mermaid');
+    target.each(function(index, element) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
+                    document.getElementById('mermaidButton' + (index+1)).addEventListener('click', () => {
+                        var svgContent = element.innerHTML.trim();
+                        var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                        var link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'mermaid' + (index+1) + '.svg'; // Set the file name
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                    });
+                }
+            });
+        });
 
+        observer.observe(element, config);
+    });
+});"
         );
     }
 }
