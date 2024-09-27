@@ -120,7 +120,9 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                         });"
         );
 
-        // testing
+        // adds image-save capability
+        // First: Wait until the DOM content is fully loaded
+        // Second: Wait until Mermaid has changed the dokuwiki content to an svg
         $event->data['script'][] = array
         (
             'type'    => 'text/javascript',
@@ -133,11 +135,19 @@ document.addEventListener('DOMContentLoaded', function() {
         characterData: true
     };
 
-    var target =  jQuery('.mermaid');
-    target.each(function(index, element) {
+    jQuery('.mermaid').each(function(index, element) {
+        
+
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
+                    element.addEventListener('mouseenter', function() {
+                        document.getElementById('mermaidButton' + (index+1)).style.display = 'block';
+                    });
+                    element.addEventListener('mouseleave', function() {
+                        document.getElementById('mermaidButton' + (index+1)).style.display = 'none';
+                    });
+
                     document.getElementById('mermaidButton' + (index+1)).addEventListener('click', () => {
                         var svgContent = element.innerHTML.trim();
                         var blob = new Blob([svgContent], { type: 'image/svg+xml' });
