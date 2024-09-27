@@ -107,7 +107,6 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             default:
         }
     
-        /*
         // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
         $event->data['script'][] = array
         (
@@ -120,7 +119,6 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                              })
                         });"
         );
-        */
 
         // adds image-save capability
         // First: Wait until the DOM content is fully loaded
@@ -141,19 +139,19 @@ document.addEventListener('DOMContentLoaded', function() {
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
-                    document.getElementById('mermaidContainer' + (index+1)).addEventListener('mouseenter', function() {
-                        document.getElementById('mermaidButton' + (index+1)).style.display = 'block';
+                    document.getElementById('mermaidContainer' + index).addEventListener('mouseenter', function() {
+                        document.getElementById('mermaidButton' + index).style.display = 'block';
                     });
-                    document.getElementById('mermaidContainer' + (index+1)).addEventListener('mouseleave', function() {
-                        document.getElementById('mermaidButton' + (index+1)).style.display = 'none';
+                    document.getElementById('mermaidContainer' + index).addEventListener('mouseleave', function() {
+                        document.getElementById('mermaidButton' + index).style.display = 'none';
                     });
 
-                    document.getElementById('mermaidButton' + (index+1)).addEventListener('click', () => {
+                    document.getElementById('mermaidButton' + index).addEventListener('click', () => {
                         var svgContent = element.innerHTML.trim();
                         var blob = new Blob([svgContent], { type: 'image/svg+xml' });
                         var link = document.createElement('a');
                         link.href = URL.createObjectURL(blob);
-                        link.download = 'mermaid' + (index+1) + '.svg';
+                        link.download = 'mermaid' + index + '.svg';
                         link.click();
                         URL.revokeObjectURL(link.href);
                     });
