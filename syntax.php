@@ -133,7 +133,6 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     $this->mermaidContent .= '<span class="mermaid" id=mermaidContent'.$this->mermaidCounter.' style="width:'.$divwidth.'; height:'.$divheight.'">';
                 break;
                 case DOKU_LEXER_UNMATCHED:
-                    echo '<pre>' , var_export($match) , '</pre>';
                     $explodedMatch = explode("\n", $match);
 
                     if(str_starts_with($explodedMatch[1], '%%<svg'))
@@ -147,8 +146,6 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     {
                         $this->currentMermaidIsLocked = false;
                     }
-
-                    echo '<pre>' , var_export($this->currentMermaidIsLocked) , '</pre>';
 
                     $israwmode = isset($explodedMatch[1]) && strpos($explodedMatch[1], 'raw') !== false;
                     if($israwmode)
