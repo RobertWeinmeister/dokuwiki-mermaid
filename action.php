@@ -12,6 +12,51 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
     public function register(Doku_Event_Handler $controller)
     {
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'load');
+        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handleAjaxRequest');
+    }
+
+    public function handleAjaxRequest(Doku_Event $event, $param) {
+        if ($event->data !== 'plugin_mermaid')
+        {
+            return;
+        }
+
+        $event->stopPropagation();
+        $event->preventDefault();
+
+        $ID = cleanID(urldecode($_REQUEST['pageid']));
+
+        if(auth_quickaclcheck($ID) < AUTH_EDIT)
+        {
+            echo json_encode(['status' => 'failure', 'data' => ['You do not have permission to edit this file.\nAccess was denied.']]);
+            exit();
+        }
+
+        if(checklock($ID))
+        {
+            echo json_encode(['status' => 'failure', 'data' => ['The page is currently locked.\nTry again later.']]);
+            exit();
+        }
+
+        $wikitext = rawWiki($ID);
+        preg_match_all('/<mermaid.*?>(.*?)<\/mermaid>/s', $wikitext, $matches, PREG_OFFSET_CAPTURE);
+
+        if(is_array($matches) && count($matches[0]) > $_REQUEST['mermaidindex'])
+        {
+            $whereToInsert = $matches[1][$_REQUEST['mermaidindex']][1];
+            $newWikitext = substr($wikitext, 0, $whereToInsert) . "\n%%" . $_REQUEST['svg'] . "\n" . substr($wikitext, $whereToInsert);
+
+            lock($ID);
+            saveWikiText($ID, $newWikitext, 'Locked Mermaid diagram', $minoredit = true);
+            unlock($ID);
+
+            //echo json_encode(['status' => 'success', 'data' => ['Mermaid diagram is now locked.']]);
+            echo json_encode(['status' => 'success', 'data' => [$newWikitext]]);
+            exit();
+        }
+
+        echo json_encode(['status' => 'failure', 'data' => ['Could not lock the Mermaid diagram.']]);
+        exit();
     }
 
     public function load(Doku_Event $event, $param)
@@ -107,6 +152,13 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             default:
         }
     
+        $event->data['script'][] = array
+        (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => ""
+        );
+
         // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
         $event->data['script'][] = array
         (
@@ -135,18 +187,35 @@ document.addEventListener('DOMContentLoaded', function() {
         characterData: true
     };
 
+    function callDokuWikiPHP(index, mermaidRaw, mermaidSvg) {
+    jQuery.post(
+        DOKU_BASE + 'lib/exe/ajax.php',
+        {
+            call: 'plugin_mermaid',
+            mermaidindex: index,
+            pageid: '".getID()."',
+            original: mermaidRaw,
+            svg: mermaidSvg
+        },
+        function(response) {
+            alert(response.data[0]);
+        },
+        'json'
+    )};
+
     jQuery('.mermaid').each(function(index, element) {
+        var originalMermaidContent = element.innerHTML;
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
                     document.getElementById('mermaidContainer' + index).addEventListener('mouseenter', function() {
-                        document.getElementById('mermaidButton' + index).style.display = 'block';
+                        document.getElementById('mermaidFieldset' + index).style.display = 'flex';
                     });
                     document.getElementById('mermaidContainer' + index).addEventListener('mouseleave', function() {
-                        document.getElementById('mermaidButton' + index).style.display = 'none';
+                        document.getElementById('mermaidFieldset' + index).style.display = 'none';
                     });
 
-                    document.getElementById('mermaidButton' + index).addEventListener('click', () => {
+                    document.getElementById('mermaidButtonSave' + index).addEventListener('click', () => {
                         var svgContent = element.innerHTML.trim();
                         var blob = new Blob([svgContent], { type: 'image/svg+xml' });
                         var link = document.createElement('a');
@@ -154,6 +223,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         link.download = 'mermaid' + index + '.svg';
                         link.click();
                         URL.revokeObjectURL(link.href);
+                    });
+
+                    document.getElementById('mermaidButtonPermanent' + index).addEventListener('click', () => {
+                        callDokuWikiPHP(index, originalMermaidContent, element.innerHTML.trim());
                     });
                 }
             });
