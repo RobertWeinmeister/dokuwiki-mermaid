@@ -1,19 +1,20 @@
-# Mermaid Plugin for DokuWiki
+﻿# Mermaid Plugin for DokuWiki
 
 This is a plugin for [Dokuwiki](https://www.dokuwiki.org/dokuwiki). It provides support for the diagramming tool [Mermaid](https://mermaid.js.org/). Mermaid is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
 1. [Installation](#installation)
-2. [Usage](#usage)
-3. [Configuration and Settings](#configuration-and-settings)
-4. [Known Problems](#known-problems)
-5. [Further Information](#further-information)
-6. [License](#license)
+2. [Basic example](#basic-example)
+3. [Further Functionality](#further-functionality)
+4. [Configuration and Settings](#configuration-and-settings)
+5. [Known Problems](#known-problems)
+6. [Further Information](#further-information)
+7. [License](#license)
 
 ## Installation
 
 Install the plugin using the [Dokuwiki Plugin Manager](https://www.dokuwiki.org/plugin:plugin). Refer to [Plugins](https://www.dokuwiki.org/plugins|Plugins) on how to install plugins manually.
 
-## Usage
+## Basic example
 
 Provide the Mermaid code enclosed by the ```<mermaid>``` tags:
 
@@ -27,7 +28,13 @@ Provide the Mermaid code enclosed by the ```<mermaid>``` tags:
 
 This will be rendered by the plugin and shown as:
 
-![alt text](https://github.com/RobertWeinmeister/dokuwiki-mermaid/blob/main/example.png?raw=true)
+![The diagram as provided by Mermaid](https://github.com/RobertWeinmeister/dokuwiki-mermaid/blob/main/example.png?raw=true)
+
+For more examples and details on the Mermaid syntax, see https://mermaid.js.org/intro/.
+
+## Further Functionality
+
+### Size Adjustmens
 
 The width and height of the container of the diagram can be adjusted using
 
@@ -36,8 +43,6 @@ The width and height of the container of the diagram can be adjusted using
 where #width and #height can take any value supported by CSS, for example:
 
     <mermaid 100% 1cm>
-
-For more examples and details on the Mermaid syntax, see https://mermaid.js.org/intro/.
 
 ### Raw mode
 
@@ -54,6 +59,18 @@ If needed, the Mermaid code can be passed on without any processing or rendering
 
 This allows to use the full feature set of Mermaid without interference from DokuWiki, albeit at the expanse of not being able to use any functionality provided by DokuWiki.
 
+### 🆕 Exporting Diagrams
+
+To export a diagram, simply hover your mouse over the diagram to reveal the Save button. Clicking it will allow you to download the diagram in SVG format, preserving the exact appearance as rendered by Mermaid. 
+
+### 🆕 🧪 No Client Side Diagram Conversion
+
+By default, Mermaid diagrams are converted from Mermaid syntax to SVG on the client side. To change this to get the SVG directly form the server, simply hover your mouse over the diagram to reveal the Lock button. Clicking it will include the SVG directly in a new page revision, eliminating the need for client-side transformation.
+
+This can be useful for archiving pages or for use with other plugins that do not work with client side changes like [dw2pdf](https://www.dokuwiki.org/plugin:dw2pdf).
+
+To unlock and edit the diagram again, hover over it to reveal the Unlock button. Clicking it will remove the embedded SVG in a new page revision, allowing for further modification.
+
 ## Configuration and Settings
 
 No further configuration is required.
@@ -62,9 +79,9 @@ No further configuration is required.
 
 You can choose which Mermaid version you want to use:
 
- - the locally hosted version
- - the remotely hosted, currently available, latest version
- - a remotely hosted specific version
+ - The locally hosted version (currently version [11.2.1](https://github.com/mermaid-js/mermaid/releases/tag/mermaid%4011.2.1)),
+ - the remotely hosted, currently available, latest version or
+ - a remotely hosted specific version.
 
 ### Default theme
 
@@ -72,7 +89,7 @@ You can choose which Mermaid theme should be used as a default. The available th
 
 ## Known Problems
 
-The syntax of Mermaid and DokuWiki can clash in rare cases. If you encounter problems, feel free to report them and open an issue.
+Allmost all of the DokuWiki syntax is supported. In rare cases it can clash with the syntax of Mermaid. If you encounter any problems, feel free to report them and open an issue.
 
 You can sidestep these problems by using the [raw mode](#raw-mode) which disables the processing by DokuWiki, or adjust your Mermaid code as shown below.
 
@@ -82,7 +99,7 @@ Mermaid and DokuWiki both use brackets. If you need to use them both at the same
 
 ### Binding Click Events 
 
-Mermaid supports the [binding of click events](https://mermaid.js.org/syntax/flowchart.html#interaction). This can and will clash with DokuWikis own handling of links. Instead of:
+Mermaid supports the [binding of click events](https://mermaid.js.org/syntax/flowchart.html#interaction). This can and will clash with DokuWikis own handling of links. In general, use DokuWiki style links instead of click events, i. e. instead of
 
     <mermaid>
       flowchart TD
