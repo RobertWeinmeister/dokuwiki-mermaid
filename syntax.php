@@ -138,7 +138,6 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     if(str_starts_with($explodedMatch[1], '%%<svg'))
                     {
                         $this->currentMermaidIsLocked = true;
-                        
                         $this->mermaidContent = $this->mermaidContentIfLocked . substr($explodedMatch[1], 2);
                         break;
                     }
