@@ -173,13 +173,6 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                 break;
             default:
         }
-    
-        $event->data['script'][] = array
-        (
-            'type'    => 'text/javascript',
-            'charset' => 'utf-8',
-            '_data' => ""
-        );
 
         // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
         $event->data['script'][] = array
