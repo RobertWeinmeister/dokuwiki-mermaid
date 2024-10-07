@@ -1,4 +1,5 @@
 <?php
+if (!defined('DOKU_INC')) die();
 
 class renderer_plugin_mermaid extends Doku_Renderer_xhtml
 {

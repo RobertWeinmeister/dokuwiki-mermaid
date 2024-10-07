@@ -6,6 +6,8 @@
  * @author  Robert Weinmeister <develop@weinmeister.org>
  */
 
+if (!defined('DOKU_INC')) die();
+
 use dokuwiki\Parsing\Parser;
 
 class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin

@@ -6,12 +6,18 @@
  * @author  Robert Weinmeister <develop@weinmeister.org>
  */
 
+if (!defined('DOKU_INC')) die();
+
 class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 {
+    private $containsMermaid;
+    private $test;
+
     /** @inheritDoc */
     public function register(Doku_Event_Handler $controller)
     {
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'load');
+        $controller->register_hook('TPL_ACT_PREPROCESS', 'BEFORE', $this, 'check');
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handleAjaxRequest');
     }
 
@@ -81,8 +87,24 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         exit();
     }
 
+    public function check(Doku_Event $event, $param)
+    {
+        echo '<pre>' , var_export($event) , '</pre>';
+        echo '<pre>' , var_export($param) , '</pre>';
+        $this->test = $event;
+        //$this->containsMermaid = strpos($event->data, '<mermaid') !== false;
+    }
+
     public function load(Doku_Event $event, $param)
     {
+        echo '<pre>' , var_export($this->test) , '</pre>';
+        echo '<pre>' , var_export($this->containsMermaid) , '</pre>';
+
+        if(!is_null($this->containsMermaid)  && !$this->containsMermaid)
+        {
+            return;
+        }
+
         // Can be changed for debugging Mermaid
         // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
         define("MERMAIDLOGLEVEL", "error");

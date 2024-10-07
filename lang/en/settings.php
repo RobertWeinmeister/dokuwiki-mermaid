@@ -1,4 +1,5 @@
 <?php
+if (!defined('DOKU_INC')) die();
 
 $lang['location'] = 'Use locally or remotely hosted mermaid file?';
 $lang['location_o_local'] = 'locally hosted, version 11.2.1 (CJS)';
