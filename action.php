@@ -85,7 +85,8 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
     public function load(Doku_Event $event, $param)
     {
-        if(strpos(rawWiki($ID), '<mermaid') === false)
+        // only load mermaid if it is needed
+        if(strpos(rawWiki(getID()), '<mermaid') === false)
         {
             return;
         }
