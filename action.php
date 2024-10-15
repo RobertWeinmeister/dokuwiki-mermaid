@@ -6,6 +6,8 @@
  * @author  Robert Weinmeister <develop@weinmeister.org>
  */
 
+if (!defined('DOKU_INC')) die();
+
 class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 {
     /** @inheritDoc */
@@ -83,6 +85,12 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 
     public function load(Doku_Event $event, $param)
     {
+        // only load mermaid if it is needed
+        if(strpos(rawWiki(getID()), '<mermaid') === false)
+        {
+            return;
+        }
+
         // Can be changed for debugging Mermaid
         // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
         define("MERMAIDLOGLEVEL", "error");
