@@ -1,7 +1,23 @@
 <?php
-if (!defined('DOKU_INC')) die();
+if (!defined('DOKU_INC')) {
+    die();
+}
 
-$meta['location'] = array('multichoice', '_choices' => array('local', 'latest', 'remote1091', 'remote943'));
-$meta['theme'] = array('multichoice', '_choices' => array('default', 'neutral', 'dark', 'forest', 'base', 'mc', 'neo', 'neo-dark'));
-$meta['look'] = array('multichoice', '_choices' => array('classic', 'neo', 'handDrawn'));
-$meta['logLevel'] = array('multichoice', '_choices' => array('trace', 'debug', 'info', 'warn', 'error', 'fatal'));
+$meta = [
+    'location' => [
+        'multichoice',
+        '_choices' => ['local', 'latest', 'remote1091', 'remote943']
+    ],
+    'theme' => [
+        'multichoice',
+        '_choices' => ['default', 'neutral', 'dark', 'forest', 'base', 'mc', 'neo', 'neo-dark']
+    ],
+    'look' => [
+        'multichoice',
+        '_choices' => ['classic', 'neo', 'handDrawn']
+    ],
+    'logLevel' => [
+        'multichoice',
+        '_choices' => ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
+    ]
+];
