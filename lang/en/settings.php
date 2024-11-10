@@ -24,3 +24,11 @@ $lang['theme_o_neutral'] = 'neutral';
 $lang['theme_o_dark'] = 'dark';
 $lang['theme_o_forest'] = 'forest';
 $lang['theme_o_base'] = 'base';
+$lang['theme_o_mc'] = 'mc';
+$lang['theme_o_neo'] = 'neo';
+$lang['theme_o_neo-dark'] = 'neo-dark';
+
+$lang['theme'] = 'Default look';
+$lang['theme_o_classic'] = 'classic';
+$lang['theme_o_neo'] = 'neo';
+$lang['theme_o_handDrawn'] = 'handDrawn';
