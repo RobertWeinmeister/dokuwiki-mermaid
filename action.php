@@ -91,13 +91,10 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             return;
         }
 
-        // Can be changed for debugging Mermaid
-        // https://mermaid.js.org/config/directives.html#changing-loglevel-via-directive
-        define("MERMAIDLOGLEVEL", "debug");
-
         $theme = $this->getConf('theme');
         $look = $this->getConf('look');
-        $init = "mermaid.initialize({startOnLoad: true, logLevel: '".MERMAIDLOGLEVEL."', theme: '".$theme."', look: '".$look."'});";
+        $logLevel = $this->getConf('logLevel');
+        $init = "mermaid.initialize({startOnLoad: true, logLevel: '".$logLevel."', theme: '".$theme."', look: '".$look."'});";
         $location = $this->getConf('location');
 
         switch ($location) {

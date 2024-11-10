@@ -28,7 +28,15 @@ $lang['theme_o_mc'] = 'mc';
 $lang['theme_o_neo'] = 'neo';
 $lang['theme_o_neo-dark'] = 'neo-dark';
 
-$lang['theme'] = 'Default look';
-$lang['theme_o_classic'] = 'classic';
-$lang['theme_o_neo'] = 'neo';
-$lang['theme_o_handDrawn'] = 'handDrawn';
+$lang['look'] = 'Default look';
+$lang['look_o_classic'] = 'classic';
+$lang['look_o_neo'] = 'neo';
+$lang['look_o_handDrawn'] = 'handDrawn';
+
+$lang['logLevel'] = 'Default look';
+$lang['logLevel_o_trace'] = 'trace';
+$lang['logLevel_o_debug'] = 'debug';
+$lang['logLevel_o_info'] = 'info';
+$lang['logLevel_o_warn'] = 'warn';
+$lang['logLevel_o_error'] = 'error';
+$lang['logLevel_o_fatal'] = 'fatal';
