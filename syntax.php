@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * DokuWiki Plugin Mermaid (Syntax Component)
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  Robert Weinmeister <develop@weinmeister.org>
  */
+
+declare(strict_types=1);
 
 if (!defined('DOKU_INC'))
 {
@@ -285,6 +285,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
 
     public function p_render($instructions)
     {
+        
         $Renderer = p_get_renderer('mermaid');
 
         // Loop through the instructions
@@ -293,7 +294,6 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
             call_user_func_array(array(&$Renderer, $instruction[0]), $instruction[1] ? $instruction[1] : array());
             }
         }
-
         return $Renderer->doc;
     }
 }

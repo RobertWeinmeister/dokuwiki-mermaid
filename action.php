@@ -6,36 +6,76 @@
  * @author  Robert Weinmeister <develop@weinmeister.org>
  */
 
-if (!defined('DOKU_INC')) die();
+declare(strict_types=1);
+
+if (!defined('DOKU_INC')) {
+    die();
+}
 
 class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
 {
     /** @inheritDoc */
-    public function register(Doku_Event_Handler $controller)
-    {
+    public function register(Doku_Event_Handler $controller): void {
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'load');
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handleAjaxRequest');
     }
 
-    public function handleAjaxRequest(Doku_Event $event, $param) {
-        if ($event->data !== 'plugin_mermaid')
-        {
+    private function hasPermissionToEdit(string $ID): bool {
+        return auth_quickaclcheck($ID) >= AUTH_EDIT;
+    }
+
+    private function isPageLocked(string $ID): bool {
+    return checklock($ID);
+    }
+
+    private function lockMermaidDiagram(string $wikitext): string {
+        preg_match_all('/<mermaid.*?>(.*?)<\/mermaid>/s', $wikitext, $matches, PREG_OFFSET_CAPTURE);
+    
+        if (is_array($matches) && count($matches[0]) > (int)$_REQUEST['mermaidindex']) {
+            $whereToInsert = $matches[1][(int)$_REQUEST['mermaidindex']][1];
+            return substr($wikitext, 0, $whereToInsert) . "\n%%" . urldecode($_REQUEST['svg']) . "\n" . substr($wikitext, $whereToInsert);
+        }
+    
+        echo json_encode(['status' => 'failure', 'data' => ['Could not lock the Mermaid diagram as the request could not be matched.']]);
+        exit();
+    }
+    
+    private function unlockMermaidDiagram(string $wikitext): string {
+        $newWikitext = str_replace("\n%%" . urldecode($_REQUEST['svg']) . "\n", '', $wikitext, $count);
+    
+        if ($count !== 1) {
+            echo json_encode(['status' => 'failure', 'data' => ['Could not unlock the Mermaid diagram as the request could not be matched.']]);
+            exit();
+        }
+    
+        return $newWikitext;
+    }
+    
+    private function isWikiTextChanged(string $wikitext, string $newWikitext): bool {
+        return strlen($newWikitext) > 0 && $newWikitext !== $wikitext;
+    }
+    
+    private function saveWikiChanges(string $ID, string $newWikitext, string $mode): void {
+        lock($ID);
+        saveWikiText($ID, $newWikitext, "{$mode} Mermaid diagram", true);
+        unlock($ID);
+    }
+
+    public function handleAjaxRequest(Doku_Event $event, $param): void {
+        if ($event->data !== 'plugin_mermaid') {
             return;
         }
-
         $event->stopPropagation();
         $event->preventDefault();
 
         $ID = cleanID(urldecode($_REQUEST['pageid']));
 
-        if(auth_quickaclcheck($ID) < AUTH_EDIT)
-        {
+        if(!$this->hasPermissionToEdit($ID)) {
             echo json_encode(['status' => 'failure', 'data' => ['You do not have permission to edit this file.\nAccess was denied.']]);
             exit();
         }
 
-        if(checklock($ID))
-        {
+        if($this->isPageLocked($ID)) {
             echo json_encode(['status' => 'failure', 'data' => ['The page is currently locked.\nTry again later.']]);
             exit();
         }
@@ -43,8 +83,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         $wikitext = rawWiki($ID);
         $newWikitext = $wikitext;
 
-        if($_REQUEST['mode'] == 'lock')
-        {
+        if($_REQUEST['mode'] === 'lock') {
             preg_match_all('/<mermaid.*?>(.*?)<\/mermaid>/s', $wikitext, $matches, PREG_OFFSET_CAPTURE);
 
             if(is_array($matches) && count($matches[0]) > $_REQUEST['mermaidindex'])
@@ -69,120 +108,98 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             }
         }
 
-        if(strlen($newWikitext) > 0 && $newWikitext != $wikitext)
-        {
-            lock($ID);
-            saveWikiText($ID, $newWikitext, $_REQUEST['mode'] . ' Mermaid diagram', $minoredit = true);
-            unlock($ID);
-
+        if($this->isWikiTextChanged($wikitext, $newWikitext)) {
+            $this->saveWikiChanges($ID, $newWikitext, $_REQUEST['mode']);
             echo json_encode(['status' => 'success', 'data' => []]);
-            exit();
+        } else{
+            echo json_encode(['status' => 'failure', 'data' => ['Could not ' . $_REQUEST['mode'] . ' the Mermaid diagram.']]);
         }
-
-        echo json_encode(['status' => 'failure', 'data' => ['Could not '.$_REQUEST['mode'].' the Mermaid diagram.']]);
+        
         exit();
     }
 
-    public function load(Doku_Event $event, $param)
-    {
+    private function addLocalScript(Doku_Event $event): void {
+        $event->data['script'][] = [
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            'src'     => DOKU_BASE . 'lib/plugins/mermaid/mermaid.min.js',
+        ];
+    }
+
+    private function addEsmScript(Doku_Event $event, string $version, string $init): void {
+        $data = "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid{$version}/dist/mermaid.esm.min.mjs';{$init}";
+        $event->data['script'][] = [
+            'type'    => 'module',
+            'charset' => 'utf-8',
+            '_data'   => $data,
+        ];
+    }
+
+    private function addScript(Doku_Event $event, string $version, string $init): void {
+        $event->data['script'][] = [
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            'src'     => "https://cdn.jsdelivr.net/npm/mermaid{$version}/dist/mermaid.min.js",
+        ];
+
+        $event->data['script'][] = [
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data'   => $init,
+        ];
+    }
+
+    /**
+     * Load the Mermaid library and configuration into the page.
+     *
+     * @param Doku_Event $event DokuWiki event object
+     * @param mixed $param Unused parameter.
+     */
+    public function load(Doku_Event $event, $param): void {
         // only load mermaid if it is needed
-        if(strpos(rawWiki(getID()), '<mermaid') === false)
-        {
+        if (!str_contains(rawWiki(getID()), '<mermaid')) {
             return;
         }
 
         $theme = $this->getConf('theme');
         $look = $this->getConf('look');
         $logLevel = $this->getConf('logLevel');
-        $init = "mermaid.initialize({startOnLoad: true, logLevel: '".$logLevel."', theme: '".$theme."', look: '".$look."'});";
+        $init = "mermaid.initialize({startOnLoad: true, logLevel: '$logLevel', theme: '$theme', look: '$look'});";
+
         $location = $this->getConf('location');
+        $versions = [
+            'latest'     => '',
+            'remote1091' => '@10.9.1',
+            'remote108'  => '@10.8.0',
+            'remote106'  => '@10.6.1',
+            'remote104'  => '@10.4.0',
+            'remote103'  => '@10.3.1',
+            'remote102'  => '@10.2.4',
+            'remote101'  => '@10.1.0',
+            'remote100'  => '@10.0.2',
+            'remote94'   => '@9.4.3',
+            'remote943'  => '@9.4.3',
+            'remote93'   => '@9.3.0',
+        ];
 
-        switch ($location) {
-            case 'local':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'text/javascript',
-                    'charset' => 'utf-8',
-                    'src' => DOKU_BASE.'lib/plugins/mermaid/mermaid.min.js'
-                );
-                break;
-            case 'latest':
-            case 'remote1091':
-            // options remote108, remote106, remote104, remote103, remote102, remote101, remote100 are depreciated and only included for backward compatibility
-            case 'remote108':
-            case 'remote106':
-            case 'remote104':
-            case 'remote103':
-            case 'remote102':
-            case 'remote101':
-            case 'remote100':
-                $versions = array(
-                    'latest' => '',
-                    'remote1091' => '@10.9.1',
-                    'remote108' => '@10.8.0',
-                    'remote106' => '@10.6.1',
-                    'remote104' => '@10.4.0',
-                    'remote103' => '@10.3.1',
-                    'remote102' => '@10.2.4',
-                    'remote101' => '@10.1.0',
-                    'remote100' => '@10.0.2'
-                );
-                $data = "import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid".$versions[$location]."/dist/mermaid.esm.min.mjs';".$init;
-                $event->data['script'][] = array
-                (
-                    'type'    => 'module',
-                    'charset' => 'utf-8',
-                    '_data' => $data
-                );
-                break;
-            // option remote94 is depreciated and only included for backward compatibility
-            case 'remote94':
-            case 'remote943':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'text/javascript',
-                    'charset' => 'utf-8',
-                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.4.3/dist/mermaid.min.js'
-                );
-                break;
-            // option remote93 is depreciated and only included for backward compatibility
-            case 'remote93':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'text/javascript',
-                    'charset' => 'utf-8',
-                    'src' => 'https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.min.js'
-                );
-                break;
-            default:
-        }
+        // add the appropriate Mermaid script based on the location configuration
+        match ($location) {
+            'local' => $this->addLocalScript($event),
+            'latest', 'remote1091', 'remote108', 'remote106', 'remote104', 'remote103', 'remote102', 'remote101', 'remote100' 
+                => $this->addEsmScript($event, $versions[$location], $init),
+            'remote94', 'remote943', 'remote93' 
+                => $this->addScript($event, $versions[$location], $init),
+            default => null,
+        };
 
-        $event->data['link'][] = array
-        (
+        $event->data['link'][] = [
             'rel'     => 'stylesheet',
             'type'    => 'text/css',
-            'href'    => DOKU_BASE."lib/plugins/mermaid/mermaid.css",
-        );
-
-        switch ($location) {
-            case 'local':
-            case 'remote943':
-            // options remote94 and remote93 are depreciated and only included for backward compatibility
-            case 'remote94':
-            case 'remote93':
-                $event->data['script'][] = array
-                (
-                    'type'    => 'text/javascript',
-                    'charset' => 'utf-8',
-                    '_data'   => $init
-                );
-                break;
-            default:
-        }
+            'href'    => DOKU_BASE . "lib/plugins/mermaid/mermaid.css",
+        ];
 
         // remove the search highlight from DokuWiki as it interferes with the Mermaid parsing/rendering
-        $event->data['script'][] = array
-        (
+        $event->data['script'][] = [
             'type'    => 'text/javascript',
             'charset' => 'utf-8',
             '_data' => "document.addEventListener('DOMContentLoaded', function() { 
@@ -191,7 +208,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                                 jQuery(this).html(modifiedContent);
                              })
                         });"
-        );
+        ];
 
         // adds image-save capability
         // First: Wait until the DOM content is fully loaded
