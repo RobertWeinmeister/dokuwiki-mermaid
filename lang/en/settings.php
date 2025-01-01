@@ -1,50 +1,60 @@
 <?php
-if (!defined('DOKU_INC')) {
-    die();
-}
-
-$lang = [
-    // Location settings
-    'location' => 'Use locally or remotely hosted mermaid file?',
-    'location_o_local' => 'locally hosted, version 11.2.1 (CJS)',
-    'location_o_latest' => 'remotely hosted, latest version (ESM)',
-    'location_o_remote1091' => 'remotely hosted, version 10.9.1 (ESM)',
-    'location_o_remote943' => 'remotely hosted, version 9.4.3 (CJS)',
-    
-    // Legacy location options (no longer explicitly available)
-    'location_o_remote108' => 'remotely hosted, version 10.8 (ESM)',
-    'location_o_remote106' => 'remotely hosted, version 10.6 (ESM)',
-    'location_o_remote104' => 'remotely hosted, version 10.4 (ESM)',
-    'location_o_remote103' => 'remotely hosted, version 10.3 (ESM)',
-    'location_o_remote102' => 'remotely hosted, version 10.2 (ESM)',
-    'location_o_remote101' => 'remotely hosted, version 10.1 (ESM)',
-    'location_o_remote100' => 'remotely hosted, version 10.0 (ESM)',
-    'location_o_remote94' => 'remotely hosted, version 9.4 (CJS)',
-    'location_o_remote93' => 'remotely hosted, version 9.3 (CJS)',
-    
-    // Theme settings
-    'theme' => 'Default theme',
-    'theme_o_default' => 'default',
-    'theme_o_neutral' => 'neutral',
-    'theme_o_dark' => 'dark',
-    'theme_o_forest' => 'forest',
-    'theme_o_base' => 'base',
-    'theme_o_mc' => 'mc',
-    'theme_o_neo' => 'neo',
-    'theme_o_neo-dark' => 'neo-dark',
-    
-    // Look settings
-    'look' => 'Default look',
-    'look_o_classic' => 'classic',
-    'look_o_neo' => 'neo',
-    'look_o_handDrawn' => 'handDrawn',
-    
-    // Log level settings
-    'logLevel' => 'Log level',  // Note: This seems to be a copy-paste error in the original, should probably be 'Log Level'
-    'logLevel_o_trace' => 'trace',
-    'logLevel_o_debug' => 'debug',
-    'logLevel_o_info' => 'info',
-    'logLevel_o_warn' => 'warn',
-    'logLevel_o_error' => 'error',
-    'logLevel_o_fatal' => 'fatal'
-];
+ /**
+  * Language settings for the DokuWiki Mermaid plugin.
+  *
+  * @package DokuWiki\Plugin\Mermaid
+  */
+ 
+ declare(strict_types=1);
+ 
+ if (!defined('DOKU_INC')) {
+     die();
+ }
+ 
+ require_once __DIR__ . '/../../conf/config_keys.php';
+ 
+ $lang = [
+     // Location settings
+     CONFIG_LOCATION => 'Use locally or remotely hosted mermaid file?',
+     CONFIG_LOCATION . '_o_local' => 'locally hosted, version 11.2.1 (CJS)',
+     CONFIG_LOCATION . '_o_latest' => 'remotely hosted, latest version (ESM)',
+     CONFIG_LOCATION . '_o_remote1091' => 'remotely hosted, version 10.9.1 (ESM)',
+     CONFIG_LOCATION . '_o_remote943' => 'remotely hosted, version 9.4.3 (CJS)',
+     
+     // Legacy location options (no longer explicitly available)
+     CONFIG_LOCATION . '_o_remote108' => 'remotely hosted, version 10.8 (ESM)',
+     CONFIG_LOCATION . '_o_remote106' => 'remotely hosted, version 10.6 (ESM)',
+     CONFIG_LOCATION . '_o_remote104' => 'remotely hosted, version 10.4 (ESM)',
+     CONFIG_LOCATION . '_o_remote103' => 'remotely hosted, version 10.3 (ESM)',
+     CONFIG_LOCATION . '_o_remote102' => 'remotely hosted, version 10.2 (ESM)',
+     CONFIG_LOCATION . '_o_remote101' => 'remotely hosted, version 10.1 (ESM)',
+     CONFIG_LOCATION . '_o_remote100' => 'remotely hosted, version 10.0 (ESM)',
+     CONFIG_LOCATION . '_o_remote94' => 'remotely hosted, version 9.4 (CJS)',
+     CONFIG_LOCATION . '_o_remote93' => 'remotely hosted, version 9.3 (CJS)',
+     
+     // Theme settings
+     CONFIG_THEME => 'Default theme',
+     CONFIG_THEME . '_o_default' => 'default',
+     CONFIG_THEME . '_o_neutral' => 'neutral',
+     CONFIG_THEME . '_o_dark' => 'dark',
+     CONFIG_THEME . '_o_forest' => 'forest',
+     CONFIG_THEME . '_o_base' => 'base',
+     CONFIG_THEME . '_o_mc' => 'mc',
+     CONFIG_THEME . '_o_neo' => 'neo',
+     CONFIG_THEME . '_o_neo_dark' => 'neo-dark',
+     
+     // Look settings
+     CONFIG_LOOK => 'Default look',
+     CONFIG_LOOK . '_o_classic' => 'classic',
+     CONFIG_LOOK . '_o_neo' => 'neo',
+     CONFIG_LOOK . '_o_handDrawn' => 'handDrawn',
+     
+     // Log level settings
+     CONFIG_LOG_LEVEL => 'Log level',
+     CONFIG_LOG_LEVEL . '_o_trace' => 'trace',
+     CONFIG_LOG_LEVEL . '_o_debug' => 'debug',
+     CONFIG_LOG_LEVEL . '_o_info' => 'info',
+     CONFIG_LOG_LEVEL . '_o_warn' => 'warn',
+     CONFIG_LOG_LEVEL . '_o_error' => 'error',
+     CONFIG_LOG_LEVEL . '_o_fatal' => 'fatal'
+ ];
