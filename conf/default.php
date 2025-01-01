@@ -1,11 +1,21 @@
 <?php
+/**
+ * Default configuration for the DokuWiki Mermaid plugin.
+ *
+ * @package DokuWiki\Plugin\Mermaid
+ */
+
+declare(strict_types=1);
+
 if (!defined('DOKU_INC')) {
     die();
 }
 
+require_once __DIR__ . '/config_keys.php';
+
 $conf = [
-    'location'  => 'latest',
-    'theme'     => 'default',
-    'look'      => 'classic',
-    'logLevel'  => 'error'
+    CONFIG_LOCATION  => 'latest',
+    CONFIG_THEME     => 'default',
+    CONFIG_LOOK      => 'classic',
+    CONFIG_LOG_LEVEL => 'error'
 ];

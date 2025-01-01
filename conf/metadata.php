@@ -1,22 +1,32 @@
 <?php
+/**
+ * Metadata configuration for the DokuWiki Mermaid plugin.
+ *
+ * @package DokuWiki\Plugin\Mermaid
+ */
+
+declare(strict_types=1);
+
 if (!defined('DOKU_INC')) {
     die();
 }
 
+require_once __DIR__ . '/config_keys.php';
+
 $meta = [
-    'location' => [
+    CONFIG_LOCATION => [
         'multichoice',
         '_choices' => ['local', 'latest', 'remote1091', 'remote943']
     ],
-    'theme' => [
+    CONFIG_THEME => [
         'multichoice',
         '_choices' => ['default', 'neutral', 'dark', 'forest', 'base', 'mc', 'neo', 'neo-dark']
     ],
-    'look' => [
+    CONFIG_LOOK => [
         'multichoice',
         '_choices' => ['classic', 'neo', 'handDrawn']
     ],
-    'logLevel' => [
+    CONFIG_LOG_LEVEL => [
         'multichoice',
         '_choices' => ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
     ]
