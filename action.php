@@ -25,7 +25,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
     }
 
     private function isPageLocked(string $ID): bool {
-    return checklock($ID);
+        return checklock($ID);
     }
 
     private function lockMermaidDiagram(string $wikitext): string {
@@ -67,6 +67,11 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         }
         $event->stopPropagation();
         $event->preventDefault();
+
+        if (!isset($_REQUEST['mermaidindex']) || !isset($_REQUEST['svg'])) {
+            echo json_encode(['status' => 'failure', 'data' => ['Missing required parameters.']]);
+            exit();
+        }
 
         $ID = cleanID(urldecode($_REQUEST['pageid']));
 
