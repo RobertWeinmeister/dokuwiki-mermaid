@@ -1,91 +1,65 @@
 <?php
+
+declare(strict_types=1);
+
 if (!defined('DOKU_INC')) die();
 
 class renderer_plugin_mermaid extends Doku_Renderer_xhtml
 {
-    function underline_open()
+    private function formattedXhtml(string $xhtml): string
     {
-        $xhtml = '<em class="u">';
+        return str_replace(['"'], ['\''], htmlentities($xhtml, ENT_NOQUOTES));
+    }
 
-        $xhtml = htmlentities($xhtml, ENT_NOQUOTES);
-        $xhtml = str_replace(array('"'), array('\''), $xhtml);
+    public function underline_open()
+    {
+        $this->doc .= $this->FormattedXhtml('<em class="u">');
+    }
+
+    public function underline_close()
+    {
+        $this->doc .= $this->FormattedXhtml('</em>');
+    }
+
+    public function internallink($id, $name = null, $search = null, $returnonly = false, $linktype = 'content')
+    {
+        $xhtml = $this->formattedXhtml(parent::internallink($id, $name, $search, true, $linktype));
+
+        if ($returnonly) {
+            return $xhtml;
+        }
 
         $this->doc .= $xhtml;
     }
 
-    function underline_close()
+    public function externallink($url, $name = null, $returnonly = false)
     {
-        $xhtml = '</em>';
+        $xhtml = $this->formattedXhtml(parent::externallink($url, $name, true));
 
-        $xhtml = htmlentities($xhtml, ENT_NOQUOTES);
-        $xhtml = str_replace(array('"'), array('\''), $xhtml);
+        if ($returnonly) {
+            return $xhtml;
+        }
 
         $this->doc .= $xhtml;
     }
 
-    function internallink($id, $name = null, $search = null, $returnonly = false, $linktype = 'content')
+    public function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null, $return = false)
     {
-        $xhtml = parent::internallink($id, $name, $search, true, $linktype);
+        $xhtml = $this->formattedXhtml(parent::internalmedia($src, $title, $align, $width, $height, $cache, $linking, true));
 
-        $xhtml = htmlentities($xhtml, ENT_NOQUOTES);
-        $xhtml = str_replace(array('"'), array('\''), $xhtml);
-
-        if($returnonly)
-        {
+        if ($return) {
             return $xhtml;
         }
-        else
-        {
-            $this->doc .= $xhtml;
-        }
+
+        $this->doc .= $xhtml;
     }
 
-    function externallink($url, $name = null, $returnonly = false)
-    {
-        $xhtml = parent::externallink($url, $name, true);
-
-        $xhtml = htmlentities($xhtml,ENT_NOQUOTES);
-        $xhtml = str_replace(array('"'), array('\''), $xhtml);
-
-        //output formatted
-        if($returnonly)
-        {
-            return $xhtml;
-        }
-        else
-        {
-            $this->doc .= $xhtml;
-        }
-    }
-
-    function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null, $return = false)
-    {
-        $xhtml = parent::internalmedia($src, $title, $align, $width, $height, $cache, $linking, true);
-
-        $xhtml = htmlentities($xhtml,ENT_NOQUOTES);
-        $xhtml = str_replace(array('"'), array('\''), $xhtml);
-
-        //output formatted
-        if($return)
-        {
-            return $xhtml;
-        }
-        else
-        {
-            $this->doc .= $xhtml;
-        }
-    }
-
-    function cdata($text)
+    public function cdata($text)
     {
         $this->doc .= $text;
     }
 
-    public function p_open()
-    {
-    }
+    public function p_open() {}
 
-    public function p_close()
-    {
-    }
+    public function p_close() {}
 }
