@@ -21,7 +21,7 @@
      CONFIG_LOCATION . '_o_remote1091' => 'remotely hosted, version 10.9.1 (ESM)',
      CONFIG_LOCATION . '_o_remote943' => 'remotely hosted, version 9.4.3 (CJS)',
      
-     // Legacy location options (no longer explicitly available)
+     // Legacy location settings (no longer explicitly available)
      CONFIG_LOCATION . '_o_remote108' => 'remotely hosted, version 10.8 (ESM)',
      CONFIG_LOCATION . '_o_remote106' => 'remotely hosted, version 10.6 (ESM)',
      CONFIG_LOCATION . '_o_remote104' => 'remotely hosted, version 10.4 (ESM)',
