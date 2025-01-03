@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 if (!defined('DOKU_INC')) die();
@@ -38,22 +39,19 @@ class renderer_plugin_mermaid extends Doku_Renderer_xhtml
         if ($returnonly) {
             return $xhtml;
         }
-        
+
         $this->doc .= $xhtml;
     }
 
     public function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null, $return = false)
     {
-        $xhtml = parent::internalmedia($src, $title, $align, $width, $height, $cache, $linking, true);
-
-        $xhtml = htmlentities($xhtml, ENT_NOQUOTES);
-        $xhtml = str_replace(['"'], ['\''], $xhtml);
+        $xhtml = $this->formattedXhtml(parent::internalmedia($src, $title, $align, $width, $height, $cache, $linking, true));
 
         if ($return) {
             return $xhtml;
-        } else {
-            $this->doc .= $xhtml;
         }
+
+        $this->doc .= $xhtml;
     }
 
     public function cdata($text)
@@ -61,11 +59,7 @@ class renderer_plugin_mermaid extends Doku_Renderer_xhtml
         $this->doc .= $text;
     }
 
-    public function p_open()
-    {
-    }
+    public function p_open() {}
 
-    public function p_close()
-    {
-    }
+    public function p_close() {}
 }
