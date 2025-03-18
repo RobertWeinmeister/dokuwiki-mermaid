@@ -15,3 +15,5 @@ const CONFIG_LOCATION = 'location';
 const CONFIG_THEME = 'theme';
 const CONFIG_LOOK = 'look';
 const CONFIG_LOG_LEVEL = 'logLevel';
+const SHOW_SAVE_BUTTON = 'showSaveButton';
+const SHOW_LOCK_BUTTON = 'showLockButton';
