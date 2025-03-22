@@ -215,10 +215,20 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                 break;
                 case DOKU_LEXER_EXIT:
                     $this->mermaidContent .= "\r\n</span>";
-                    $this->mermaidContent .= '<fieldset id="mermaidFieldset'.$this->mermaidCounter.'" style="position: absolute; top: 0; left: 0; display: none; width:auto; border: none">';
-                    $this->mermaidContent .= '<button id="mermaidButtonSave'.$this->mermaidCounter.'" style="z-index: 10; display: block; padding: 0; margin: 0; border: none; background: none; width: 24px; height: 24px;">'.self::DOKUWIKI_SVG_SAVE.'</button>';
-                    $this->mermaidContent .= '<button id="mermaidButtonPermanent'.$this->mermaidCounter.'" style="z-index: 10; display: block; padding: 0; margin: 0; border: none; background: none; width: 24px; height: 24px;">'.($this->currentMermaidIsLocked ? self::DOKUWIKI_SVG_LOCKED : self::DOKUWIKI_SVG_UNLOCKED).'</button>';
-                    $this->mermaidContent .= '</fieldset></div>';
+                    if($this->getConf('showSaveButton') or $this->getConf('showLockButton'))
+                    {
+                        $this->mermaidContent .= '<fieldset id="mermaidFieldset'.$this->mermaidCounter.'" style="position: absolute; top: 0; left: 0; display: none; width:auto; border: none">';
+                        if($this->getConf('showSaveButton'))
+                        {
+                            $this->mermaidContent .= '<button id="mermaidButtonSave'.$this->mermaidCounter.'" style="z-index: 10; display: block; padding: 0; margin: 0; border: none; background: none; width: 24px; height: 24px;">'.self::DOKUWIKI_SVG_SAVE.'</button>';
+                        }
+                        if($this->getConf('showLockButton'))
+                        {
+                            $this->mermaidContent .= '<button id="mermaidButtonPermanent'.$this->mermaidCounter.'" style="z-index: 10; display: block; padding: 0; margin: 0; border: none; background: none; width: 24px; height: 24px;">'.($this->currentMermaidIsLocked ? self::DOKUWIKI_SVG_LOCKED : self::DOKUWIKI_SVG_UNLOCKED).'</button>';
+                        }
+                        $this->mermaidContent .= '</fieldset>';
+                    }
+                    $this->mermaidContent .= '</div>';
                     
                     $renderer->doc .= $this->mermaidContent;
                     $this->mermaidContent = '';

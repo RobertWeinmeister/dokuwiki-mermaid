@@ -17,5 +17,7 @@ $conf = [
     CONFIG_LOCATION  => 'latest',
     CONFIG_THEME     => 'default',
     CONFIG_LOOK      => 'classic',
-    CONFIG_LOG_LEVEL => 'error'
+    CONFIG_LOG_LEVEL => 'error',
+    SHOW_SAVE_BUTTON => 0,
+    SHOW_LOCK_BUTTON => 0,
 ];

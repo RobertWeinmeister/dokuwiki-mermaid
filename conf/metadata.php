@@ -29,5 +29,7 @@ $meta = [
     CONFIG_LOG_LEVEL => [
         'multichoice',
         '_choices' => ['trace', 'debug', 'info', 'warn', 'error', 'fatal']
-    ]
+    ],
+    SHOW_SAVE_BUTTON => ['onoff'],
+    SHOW_LOCK_BUTTON => ['onoff'],
 ];
