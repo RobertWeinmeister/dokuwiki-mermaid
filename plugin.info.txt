@@ -1,7 +1,7 @@
 base   mermaid
 author Robert Weinmeister
 email  develop@weinmeister.org
-date   2024-10-15
+date   2025-03-23
 name   mermaid Plugin
 desc   JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 url    https://www.dokuwiki.org/plugin:mermaid
