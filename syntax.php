@@ -205,7 +205,9 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                     else
                     {
                         $instructions = $this->p_get_instructions($this->protectBracketsFromDokuWiki($match));
-                        if (strpos($instructions[2][1][0], "gantt"))
+                        if (isset($instructions[2][1][0]) &&
+                            is_string($instructions[2][1][0]) &&
+                            strpos($instructions[2][1][0], "gantt"))
                         {
                             $instructions = $this->processGanttLinks($instructions);
                         }
