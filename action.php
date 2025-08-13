@@ -154,6 +154,17 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         ];
     }
 
+    private function pageIncludesMermaid(): bool {
+        // true if the mermaid tag is used
+        // the include plugin can hide this fact, so we need a separate check for it
+        $wikiText = rawWiki(getID());
+        if (str_contains($wikiText, '<mermaid') || str_contains($wikiText, '{{page>') || str_contains($wikiText, '{{section>') || str_contains($wikiText, '{{namespace>') || str_contains($wikiText, '{{tagtopic>')) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Load the Mermaid library and configuration into the page.
      *
@@ -161,8 +172,8 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
      * @param mixed $param Unused parameter.
      */
     public function load(Doku_Event $event, $param): void {
-        // only load mermaid if it is needed
-        if (!str_contains(rawWiki(getID()), '<mermaid')) {
+         // only load mermaid if it is needed
+        if (!$this->pageIncludesMermaid()) {
             return;
         }
 
@@ -307,4 +318,3 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
 }
-
