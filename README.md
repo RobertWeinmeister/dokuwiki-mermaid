@@ -68,13 +68,13 @@ If needed, the Mermaid code can be passed on without any processing or rendering
 
 This allows to use the full feature set of Mermaid without interference from DokuWiki, albeit at the expanse of not being able to use any functionality provided by DokuWiki.
 
-### 🆕 Exporting Diagrams
+### Exporting Diagrams
 
 ❗ [Enable the save button](#visibility-of-save-and-lock-button) in the configuration first, if you want to use this functionality.
 
 To export a diagram, simply hover your mouse over the diagram to reveal the Save button. Clicking it will allow you to download the diagram in SVG format, preserving the exact appearance as rendered by Mermaid.
 
-### 🆕 🧪 No Client Side Diagram Conversion
+### 🧪 No Client Side Diagram Conversion
 
 ❗ [Enable the lock button](#visibility-of-save-and-lock-button) in the configuration first, if you want to use this functionality.
 
@@ -92,7 +92,7 @@ No further configuration is required.
 
 You can choose which Mermaid version you want to use:
 
-- The locally hosted version (currently version [11.5.0](https://github.com/mermaid-js/mermaid/releases/tag/mermaid%4011.5.0)),
+- The locally hosted version (currently version [11.9.0](https://github.com/mermaid-js/mermaid/releases/tag/mermaid%4011.9.0)),
 - the remotely hosted, currently available, latest version or
 - a remotely hosted specific version.
 
