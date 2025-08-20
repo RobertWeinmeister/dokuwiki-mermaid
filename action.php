@@ -264,28 +264,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     jQuery('.mermaidlocked, .mermaid').each(function(index, element) {
         document.getElementById('mermaidContainer' + index).addEventListener('mouseenter', function() {
-             document.getElementById('mermaidFieldset' + index).style.display = 'flex';
+             var fieldset = document.getElementById('mermaidFieldset' + index);
+             if (fieldset) {
+                    fieldset.style.display = 'flex';
+             }
         });
         document.getElementById('mermaidContainer' + index).addEventListener('mouseleave', function() {
-            document.getElementById('mermaidFieldset' + index).style.display = 'none';
+             var fieldset = document.getElementById('mermaidFieldset' + index);
+             if (fieldset) {
+                    fieldset.style.display = 'none';
+             }
         });
 
         if(jQuery(element).hasClass('mermaidlocked')) {
-            document.getElementById('mermaidButtonSave' + index).addEventListener('click', () => {
-                var svgContent = element.innerHTML.trim();
-                var blob = new Blob([svgContent], { type: 'image/svg+xml' });
-                var link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'mermaid' + index + '.svg';
-                link.click();
-                URL.revokeObjectURL(link.href);
-            });
-
-            document.getElementById('mermaidButtonPermanent' + index).addEventListener('click', () => {
-                if(confirm('Unlock Mermaid diagram?')) {
-                    callDokuWikiPHP('unlock', index, originalMermaidContent, element.innerHTML.trim());
-                }
-            });
+            var buttonSave = document.getElementById('mermaidButtonSave' + index);
+            if (buttonSave) {
+                buttonSave.addEventListener('click', () => {
+                    var svgContent = element.innerHTML.trim();
+                    var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                    var link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'mermaid' + index + '.svg';
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                });
+            }
+            var buttonPermanent = document.getElementById('mermaidButtonPermanent' + index);
+            if (buttonPermanent) {
+                buttonPermanent.addEventListener('click', () => {
+                    if(confirm('Unlock Mermaid diagram?')) {
+                        callDokuWikiPHP('unlock', index, originalMermaidContent, element.innerHTML.trim());
+                    }
+                });
+            }
         }
 
         if(jQuery(element).hasClass('mermaid')) {
@@ -293,21 +304,26 @@ document.addEventListener('DOMContentLoaded', function() {
             var observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'childList' && element.innerHTML.startsWith('<svg')) {
-                        document.getElementById('mermaidButtonSave' + index).addEventListener('click', () => {
-                            var svgContent = element.innerHTML.trim();
-                            var blob = new Blob([svgContent], { type: 'image/svg+xml' });
-                            var link = document.createElement('a');
-                            link.href = URL.createObjectURL(blob);
-                            link.download = 'mermaid' + index + '.svg';
-                            link.click();
-                            URL.revokeObjectURL(link.href);
-                        });
-
-                       document.getElementById('mermaidButtonPermanent' + index).addEventListener('click', () => {
-                            if(confirm('Lock Mermaid diagram? [experimental]')) {
-                                callDokuWikiPHP('lock', index, originalMermaidContent, element.innerHTML.trim());
-                            }
-                       });
+                        var saveButton = document.getElementById('mermaidButtonSave' + index);
+                        if (saveButton) {
+                            saveButton.addEventListener('click', () => {
+                                var svgContent = element.innerHTML.trim();
+                                var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                                var link = document.createElement('a');
+                                link.href = URL.createObjectURL(blob);
+                                link.download = 'mermaid' + index + '.svg';
+                                link.click();
+                                URL.revokeObjectURL(link.href);
+                            });
+                        }
+                        var buttonPermanent = document.getElementById('mermaidButtonPermanent' + index);
+                        if (buttonPermanent) {
+                            buttonPermanent.addEventListener('click', () => {
+                                    if(confirm('Lock Mermaid diagram? [experimental]')) {
+                                        callDokuWikiPHP('lock', index, originalMermaidContent, element.innerHTML.trim());
+                                    }
+                            });
+                        }
                     }
                 });
             });
