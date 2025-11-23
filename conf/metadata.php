@@ -16,7 +16,7 @@ require_once __DIR__ . '/config_keys.php';
 $meta = [
     CONFIG_LOCATION => [
         'multichoice',
-        '_choices' => ['local', 'latest', 'remote1091', 'remote943']
+        '_choices' => ['local', 'latest', 'remote1095', 'remote943']
     ],
     CONFIG_THEME => [
         'multichoice',

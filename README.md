@@ -92,7 +92,7 @@ No further configuration is required.
 
 You can choose which Mermaid version you want to use:
 
-- The locally hosted version (currently version [11.9.0](https://github.com/mermaid-js/mermaid/releases/tag/mermaid%4011.9.0)),
+- The locally hosted version (currently version [11.12.1](https://github.com/mermaid-js/mermaid/releases/tag/mermaid%4011.12.1)),
 - the remotely hosted, currently available, latest version or
 - a remotely hosted specific version.
 
