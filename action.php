@@ -162,6 +162,9 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
             return true;
         }
 
+        global $ACT;
+        if ('preview'==$ACT) return true;
+
         return false;
     }
 
