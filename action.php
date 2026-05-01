@@ -157,7 +157,17 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
     private function pageIncludesMermaid(): bool {
         // true if the mermaid tag is used
         // the include plugin can hide this fact, so we need a separate check for it
-        $wikiText = rawWiki(getID());
+        global $ACT;
+        global $TEXT;
+        if ('preview'==$ACT) {
+            $wikiText = $TEXT;
+        } else {
+            $wikiText = rawWiki(getID());
+        }
+
+        if ('edit'==$ACT) {
+            return false;
+        }
         if (str_contains($wikiText, '<mermaid') || str_contains($wikiText, '{{page>') || str_contains($wikiText, '{{section>') || str_contains($wikiText, '{{namespace>') || str_contains($wikiText, '{{tagtopic>')) {
             return true;
         }
