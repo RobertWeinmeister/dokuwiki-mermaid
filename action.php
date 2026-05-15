@@ -195,6 +195,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         $location = $this->getConf('location');
         $versions = [
             'latest'     => '',
+            'remote1096' => '@10.9.6',
             'remote1095' => '@10.9.5',
             'remote1091' => '@10.9.1',
             'remote108'  => '@10.8.0',
@@ -212,7 +213,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         // add the appropriate Mermaid script based on the location configuration
         match ($location) {
             'local' => $this->addLocalScript($event),
-            'latest', 'remote1095', 'remote1091', 'remote108', 'remote106', 'remote104', 'remote103', 'remote102', 'remote101', 'remote100' 
+            'latest', 'remote1096', 'remote1095', 'remote1091', 'remote108', 'remote106', 'remote104', 'remote103', 'remote102', 'remote101', 'remote100' 
                 => $this->addEsmScript($event, $versions[$location], $init),
             'remote94', 'remote943', 'remote93' 
                 => $this->addScript($event, $versions[$location], $init),

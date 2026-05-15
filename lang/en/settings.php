@@ -16,12 +16,13 @@
  $lang = [
      // Location settings
      CONFIG_LOCATION => 'Use locally or remotely hosted mermaid file?',
-     CONFIG_LOCATION . '_o_local' => 'locally hosted, version 11.12.1 (CJS)',
+     CONFIG_LOCATION . '_o_local' => 'locally hosted, version 11.15.0 (CJS)',
      CONFIG_LOCATION . '_o_latest' => 'remotely hosted, latest version (ESM)',
-     CONFIG_LOCATION . '_o_remote1095' => 'remotely hosted, version 10.9.5 (ESM)',
+     CONFIG_LOCATION . '_o_remote1096' => 'remotely hosted, version 10.9.6 (ESM)',
      CONFIG_LOCATION . '_o_remote943' => 'remotely hosted, version 9.4.3 (CJS)',
      
      // Legacy location settings (no longer explicitly available)
+     CONFIG_LOCATION . '_o_remote1095' => 'remotely hosted, version 10.9.5 (ESM)',
      CONFIG_LOCATION . '_o_remote1091' => 'remotely hosted, version 10.9.1 (ESM)',
      CONFIG_LOCATION . '_o_remote108' => 'remotely hosted, version 10.8 (ESM)',
      CONFIG_LOCATION . '_o_remote106' => 'remotely hosted, version 10.6 (ESM)',
