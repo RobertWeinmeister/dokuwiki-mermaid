@@ -247,9 +247,6 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
     */
     function p_get_instructions($text)
     {
-        //import parser classes and mode definitions
-        require_once DOKU_INC . 'inc/parser/parser.php';
-
         // https://www.dokuwiki.org/devel:parser
         // https://www.dokuwiki.org/devel:parser#basic_invocation
         // Create the parser and the handler
@@ -275,7 +272,14 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         $fmt_modes = array( 'strong', 'emphasis', 'underline', 'monospace', 'subscript', 'superscript', 'deleted');
         foreach($fmt_modes as $m)
         {
-          $obj   = new \dokuwiki\Parsing\ParserMode\Formatting($m);
+            // pre-Mort class
+            if (class_exists('dokuwiki\\Parsing\\ParserMode\\Formatting')) {
+                $obj   = new \dokuwiki\Parsing\ParserMode\Formatting($m);
+            } else {
+                $class = 'dokuwiki\\Parsing\\ParserMode\\'.ucfirst($m);
+                $obj   = new $class();
+            }
+
           $modes[] = array(
             'sort' => $obj->getSort(),
             'mode' => $m,
