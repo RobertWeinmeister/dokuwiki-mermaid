@@ -164,10 +164,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
         } else {
             $wikiText = rawWiki(getID());
         }
-
-        if ('edit'==$ACT) {
-            return false;
-        }
+        
         if (str_contains($wikiText, '<mermaid') || str_contains($wikiText, '{{page>') || str_contains($wikiText, '{{section>') || str_contains($wikiText, '{{namespace>') || str_contains($wikiText, '{{tagtopic>')) {
             return true;
         }
@@ -183,7 +180,7 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
      */
     public function load(Doku_Event $event, $param): void {
          // only load mermaid if it is needed
-        if (!$this->pageIncludesMermaid()) {
+        if ('edit'!=$ACT  &&  !$this->pageIncludesMermaid()) {
             return;
         }
 
@@ -236,6 +233,20 @@ class action_plugin_mermaid extends \dokuwiki\Extension\ActionPlugin
                                 jQuery(this).html(modifiedContent);
                              })
                         });"
+        ];
+    
+        // adds live-preview compatibility (See https://www.dokuwiki.org/devel:js_live_syntax_rendering)
+        $event->data['script'][] = [
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            '_data' => "document.addEventListener('DOMContentLoaded', function() {             
+                    if (!window.dw_livepreview_callbacks) {
+                        window.dw_livepreview_callbacks = {};
+                    }            
+                    window.dw_livepreview_callbacks['mermaid'] = function() {
+                        return mermaid.run({querySelector: '#dw_livepreview_buffer .mermaid'});
+                    }            
+            });"
         ];
 
         // adds image-save capability
