@@ -116,6 +116,14 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
         );
     }
 
+    private function escapeClassAnnotations(string $text): string {
+        return str_replace(
+            ['<<', '>>'],
+            ['&lt;&lt;', '&gt;&gt;'],
+            $text
+        );
+    }
+
     /** @inheritDoc */
     function getType(): string {
         return 'container';
@@ -200,7 +208,7 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                         array_shift($explodedMatch);
                         array_shift($explodedMatch);
                         $actualContent = implode("\n", $explodedMatch);
-                        $this->mermaidContent .= $actualContent;
+                        $this->mermaidContent .= $this->escapeClassAnnotations($actualContent);
                     }
                     else
                     {
@@ -212,7 +220,8 @@ class syntax_plugin_mermaid extends \dokuwiki\Extension\SyntaxPlugin
                             $instructions = $this->processGanttLinks($instructions);
                         }
                         $xhtml = $this->removeProtectionOfBracketsFromDokuWiki($this->p_render($instructions));
-                        $this->mermaidContent .= preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
+                        $xhtml = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $xhtml);
+                        $this->mermaidContent .= $this->escapeClassAnnotations($xhtml);
                     }
                 break;
                 case DOKU_LEXER_EXIT:
