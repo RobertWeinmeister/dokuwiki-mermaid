@@ -100,6 +100,37 @@ You can choose which Mermaid version you want to use:
 
 Choose which Mermaid theme and look should be used as a default. There are [eight themes and three looks](https://docs.mermaidchart.com/blog/posts/mermaid-innovation-introducing-new-looks-for-mermaid-diagrams) available.
 
+### Registering Custom Icon Packs
+
+Mermaid can load additional icon packs, such as the Iconify `logos` pack. To register one for diagrams on your wiki:
+
+1. In DokuWiki's Configuration Settings, set the Mermaid location to **remotely hosted, latest version (ESM)**. The example below must import the same Mermaid module URL as the plugin.
+2. Add the following to your DokuWiki's `conf/userscript.js` file:
+
+   ```javascript
+   import("https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs")
+     .then((mermaidModule) => {
+       mermaidModule.default.registerIconPacks([
+         {
+           name: "logos",
+           loader: () =>
+             fetch("https://unpkg.com/@iconify-json/logos@1/icons.json").then((response) => {
+               if (!response.ok) {
+                 throw new Error(`Could not load the logos icon pack: ${response.status}`);
+               }
+               return response.json();
+             }),
+         },
+       ]);
+     })
+     .catch((error) => console.error("Could not register the Mermaid logos icon pack:", error));
+   ```
+
+3. If the file did not exist, make sure it is accessible by your web server.
+4. You can now use any icon from this pack in a Mermaid architecture for flowchart diagram, for example with `service browser(logos:firefox)[Browser]`.
+
+⚠️ This change applies to your whole DokuWiki site.
+
 ### Log Level
 
 Set the [log level](https://mermaid.js.org/config/schema-docs/config.html#loglevel) of mermaid.
