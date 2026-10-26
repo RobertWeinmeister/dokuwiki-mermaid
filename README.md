@@ -1,6 +1,6 @@
 ﻿# Mermaid Plugin for DokuWiki
 
-This is a plugin for [Dokuwiki](https://www.dokuwiki.org/dokuwiki). It provides support for the diagramming tool [Mermaid](https://mermaid.js.org/). Mermaid is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
+This is a plugin for [DokuWiki](https://www.dokuwiki.org/dokuwiki). It provides support for the diagramming tool [Mermaid](https://mermaid.js.org/). Mermaid is a JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
 1. [Installation](#installation)
 2. [Basic example](#basic-example)
@@ -11,7 +11,7 @@ This is a plugin for [Dokuwiki](https://www.dokuwiki.org/dokuwiki). It provides 
 
 ## Installation
 
-Install the plugin using the [Dokuwiki Plugin Manager](https://www.dokuwiki.org/plugin:plugin). Refer to [Plugins](https://www.dokuwiki.org/plugins|Plugins) on how to install plugins manually.
+Install the plugin using the [DokuWiki Plugin Manager](https://www.dokuwiki.org/plugin:plugin). Refer to [Plugins](https://www.dokuwiki.org/plugins|Plugins) on how to install plugins manually.
 
 ⚠️ The plugin requires PHP 8.0+ to function properly.
 
@@ -43,7 +43,7 @@ For more examples and details on the Mermaid syntax, see <https://mermaid.js.org
 
 ## Further Functionality
 
-### Size Adjustmens
+### Size Adjustments
 
 The width and height of the container of the diagram can be adjusted using
 
@@ -99,6 +99,38 @@ You can choose which Mermaid version you want to use:
 ### Default Theme and Look
 
 Choose which Mermaid theme and look should be used as a default. There are [eight themes and three looks](https://docs.mermaidchart.com/blog/posts/mermaid-innovation-introducing-new-looks-for-mermaid-diagrams) available.
+
+### Registering Custom Icon Packs
+
+Mermaid can load additional icon packs, such as the Iconify `logos` pack:
+
+1. In DokuWiki's Configuration Settings, set the Mermaid location to **remotely hosted, latest version (ESM)**. The example below must import the same Mermaid module URL as the plugin.
+2. Add the following to your DokuWiki's `conf/userscript.js` file:
+
+   ```javascript
+   import("https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs")
+     .then((mermaidModule) => {
+       mermaidModule.default.registerIconPacks([
+         {
+           name: "logos",
+           loader: () =>
+             fetch("https://unpkg.com/@iconify-json/logos@1/icons.json").then((response) => {
+               if (!response.ok) {
+                 throw new Error(`Could not load the logos icon pack: ${response.status}`);
+               }
+               return response.json();
+             }),
+         },
+       ]);
+     })
+     .catch((error) => console.error("Could not register the Mermaid logos icon pack:", error));
+   ```
+
+3. If the file did not exist, make sure it is accessible by your web server.
+
+You can now use any icon from this pack in a Mermaid architecture for flowchart diagram, for example with `service browser(logos:firefox)[Browser]`.
+
+⚠️ This change applies to your whole DokuWiki site.
 
 ### Log Level
 
